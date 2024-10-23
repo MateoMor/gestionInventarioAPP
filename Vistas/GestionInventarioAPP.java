@@ -28,7 +28,7 @@ public class GestionInventarioAPP extends JFrame {
         IProductoRepositorio repository = new ProductoRepositorio();
         productoServicio = new ProductoServicio(repository);
         
-        modeloDeTabla = new DefaultTableModel(new String[]{"Nombre", "Precio", "Cantidad", "Tipo"}, 0);
+        modeloDeTabla = new DefaultTableModel(new String[]{"Nombre", "Precio", "Cantidad", "Tipo", "Proveedor"}, 0);
         tablaDeProductos = new JTable(modeloDeTabla);
         
         // Configuración de la ventana

@@ -2,7 +2,6 @@ package Modelo;
 
 import java.time.LocalDate; 
 
-
 public class ProductoPerecedero extends Producto {
 
     // Atributos adicionales
@@ -13,7 +12,7 @@ public class ProductoPerecedero extends Producto {
         super(); // Importa los atributos de la clase padre
     }
 
-    // Se inicializacn los datos
+    // Se inicializan los datos
     public ProductoPerecedero(String nombre, double precio, int cantidad, LocalDate fechaDeVencimiento) {
         super(); 
         setNombre(nombre);   
@@ -23,7 +22,7 @@ public class ProductoPerecedero extends Producto {
     }
 
     // Getters y Setters 
-    public LocalDate getfechaDeVencimiento() {
+    public LocalDate getFechaDeVencimiento() { // Cambiado a "getFechaDeVencimiento"
         return fechaDeVencimiento;
     }
 

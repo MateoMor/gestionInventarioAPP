@@ -5,6 +5,7 @@ public abstract class Producto {
     private String nombre;
     private double precio;
     private int cantidad;
+    private int proveedor;
     
     // Constructor
     public Producto() {
@@ -35,6 +36,13 @@ public abstract class Producto {
         this.cantidad = cantidad;
     }
 
+    public int getProveedor() {
+        return proveedor;
+    }
+
+    public void setProveedor(int proveedor) {
+        this.proveedor = proveedor;
+    }
     
     public double calcularValorInventario() {
         return this.cantidad * this.precio ;

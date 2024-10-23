@@ -21,8 +21,6 @@ public class VistaProducto extends JDialog {
     private JLabel lblFecha;
     private JLabel lblDiasParaCaducar;
     private JTextField txtFecha;
-    //private JTextField txtFechaDeFabricacion;
-    //private JTextField txtFechaDeVencimiento;
     private JComboBox<String> comboTipo;
 
     public VistaProducto(Frame owner, String title, Producto producto) {
@@ -35,14 +33,19 @@ public class VistaProducto extends JDialog {
         txtNombre = new JTextField(producto != null ? producto.getNombre() : "");
         txtPrecio = new JTextField(producto != null ? String.valueOf(producto.getPrecio()) : "");
         txtCantidad = new JTextField(producto != null ? String.valueOf(producto.getCantidad()) : "");
-        txtDuracionEnMeses = new JTextField(producto != null ? String.valueOf(((ProductoDuradero) producto).getDuracionEnMeses()) : "");
 
+        // Verificación de tipo para producto
         if (producto instanceof ProductoDuradero) {
-            txtFecha = new JTextField(producto != null ? String.valueOf(((ProductoDuradero) producto).getFechaDeFabricacion()) : "");
+            txtDuracionEnMeses = new JTextField(String.valueOf(((ProductoDuradero) producto).getDuracionEnMeses()));
+            txtFecha = new JTextField(String.valueOf(((ProductoDuradero) producto).getFechaDeFabricacion()));
+        } else if (producto instanceof ProductoPerecedero) {
+            txtDuracionEnMeses = new JTextField("");  // No aplica para ProductoPerecedero
+            txtFecha = new JTextField(String.valueOf(((ProductoPerecedero) producto).getFechaDeVencimiento()));
         } else {
-            txtFecha = new JTextField(producto != null ? String.valueOf(((ProductoPerecedero) producto).getfechaDeVencimiento()) : "");
+            txtDuracionEnMeses = new JTextField("");
+            txtFecha = new JTextField("");
         }
-        
+
         lblFecha = new JLabel();
         lblDiasParaCaducar = new JLabel("Días para caducar:");
 
@@ -52,13 +55,9 @@ public class VistaProducto extends JDialog {
         if (producto instanceof ProductoPerecedero) {
             comboTipo.setSelectedItem("Perecedero");
             lblFecha.setText("Fecha de Vencimiento");
-            //fechaDeVencimiento
-            //txtDiasParaCaducar.setText(String.valueOf(((ProductoPerecedero) producto).getDiasParaCaducar()));
         } else {
             comboTipo.setSelectedItem("No Perecedero");
             lblFecha.setText("Fecha de Fabricación");
-            // private int duracionEnMeses;
-            // private LocalDate fechaDeFabricacion;
         }
 
         add(new JLabel("Nombre:"));
@@ -78,6 +77,7 @@ public class VistaProducto extends JDialog {
         btnAceptar.addActionListener(e -> {
             if (validarCampos()) {
                 if (producto == null) {
+                    // Crear nuevo producto
                     if (comboTipo.getSelectedItem().equals("Perecedero")) {
                         this.producto = new ProductoPerecedero(
                                 txtNombre.getText(),
@@ -93,14 +93,14 @@ public class VistaProducto extends JDialog {
                                 LocalDate.parse(txtFecha.getText()));
                     }
                 } else {
+                    // Actualizar producto existente
                     producto.setNombre(txtNombre.getText());
                     producto.setPrecio(Double.parseDouble(txtPrecio.getText()));
                     producto.setCantidad(Integer.parseInt(txtCantidad.getText()));
-                    if (comboTipo.getSelectedItem().equals("Perecedero")) {
-                        ((ProductoPerecedero) producto)
-                                .setFechaDeVencimiento(LocalDate.parse(txtFecha.getText()));
-                    }
-                    else {
+
+                    if (producto instanceof ProductoPerecedero) {
+                        ((ProductoPerecedero) producto).setFechaDeVencimiento(LocalDate.parse(txtFecha.getText()));
+                    } else if (producto instanceof ProductoDuradero) {
                         ((ProductoDuradero) producto).setDuracionEnMeses(Integer.parseInt(txtDuracionEnMeses.getText()));
                         ((ProductoDuradero) producto).setFechaDeFabricacion(LocalDate.parse(txtFecha.getText()));
                     }
@@ -111,21 +111,18 @@ public class VistaProducto extends JDialog {
         panelBotones.add(btnAceptar);
         add(panelBotones, BorderLayout.CENTER);
 
-        comboTipo.addItemListener(new ItemListener() {
-            @Override
-            public void itemStateChanged(ItemEvent event) {
-                if (event.getStateChange() == ItemEvent.SELECTED) {
-                    String selectedOption = (String) comboTipo.getSelectedItem();
-                    if(selectedOption.equals("Perecedero")){
-                        lblFecha.setText("Fecha de Vencimiento");
-                        lblDiasParaCaducar.setVisible(false);
-                        txtDuracionEnMeses.setVisible(false);
-                    }
-                    else {
-                        lblFecha.setText("Fecha de Fabricación");
-                        lblDiasParaCaducar.setVisible(true);
-                        txtDuracionEnMeses.setVisible(true);
-                    }
+        // Manejo de cambio en el comboBox
+        comboTipo.addItemListener(event -> {
+            if (event.getStateChange() == ItemEvent.SELECTED) {
+                String selectedOption = (String) comboTipo.getSelectedItem();
+                if ("Perecedero".equals(selectedOption)) {
+                    lblFecha.setText("Fecha de Vencimiento");
+                    lblDiasParaCaducar.setVisible(false);
+                    txtDuracionEnMeses.setVisible(false);
+                } else {
+                    lblFecha.setText("Fecha de Fabricación");
+                    lblDiasParaCaducar.setVisible(true);
+                    txtDuracionEnMeses.setVisible(true);
                 }
             }
         });
