@@ -1,22 +1,30 @@
 package Vistas;
 
 import javax.swing.table.DefaultTableModel;
+
 import Modelo.Proveedor;
 
 import javax.swing.*;
 import java.awt.*;
+
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
+//import java.util.List;
 
 import Repositorio.IProveedorRepositorio;
 import Repositorio.ProveedorRepositorio;
 import Servicios.IProveedorServicio;
 import Servicios.ProveedorServicio;
 
+
+
+
 public class VistaTablaDeProveedores extends JFrame {
     
     private JTable tablaDeProveedores;
     private DefaultTableModel modeloDeTabla;
     private IProveedorServicio proveedorServicio;
-    private JLabel lblValorInventario;
 
     public VistaTablaDeProveedores(){
         IProveedorRepositorio repository = new ProveedorRepositorio();
@@ -41,8 +49,6 @@ public class VistaTablaDeProveedores extends JFrame {
         JButton btnExportarCSV = new JButton("Exportar CSV");
 
         JPanel panelInventario = new JPanel();
-        lblValorInventario = new JLabel("Valor de Inventario: $0.0");
-        panelInventario.add(lblValorInventario);
         add(panelInventario, BorderLayout.CENTER);
 
         panelBotones.add(btnAgregar);
@@ -56,6 +62,7 @@ public class VistaTablaDeProveedores extends JFrame {
         btnAgregar.addActionListener(e -> agregarProveedor());
         btnEditar.addActionListener(e -> editarProveedor());
         btnEliminar.addActionListener(e -> eliminarProveedor());
+        btnExportarCSV.addActionListener(e -> exportarCSV());
     }
 
     private void agregarProveedor() {
@@ -105,6 +112,19 @@ public class VistaTablaDeProveedores extends JFrame {
             modeloDeTabla.removeRow(filaSeleccionada);
         } else {
             JOptionPane.showMessageDialog(this, "Seleccione un proveedor para eliminar");
+        }
+    }
+
+    private void exportarCSV() {
+         try (BufferedWriter writer = new BufferedWriter(new FileWriter("proveedores.csv"))) {
+            writer.write("Nombre,Precio,Cantidad,Tipo\n");
+            for (Proveedor p : proveedorServicio.obtenerTodos()) {
+                writer.write(p.getNombre() + "," + p.getDireccion() + "," + p.getTelefono() + "," + p.getCorreo() + "\n");
+            }
+            JOptionPane.showMessageDialog(null, "Provvedores exportados a productos.csv");
+        } catch (IOException e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Error al exportar el archivo.");
         }
     }
     
