@@ -39,6 +39,7 @@ public class GestionInventarioAPP extends JFrame {
 
         // Panel de botones
         JPanel panelBotones = new JPanel();
+        JButton btnproveedores = new JButton("Proveedores");
         JButton btnAgregar = new JButton("Agregar");
         JButton btnEditar = new JButton("Editar");
         JButton btnEliminar = new JButton("Eliminar");
@@ -49,6 +50,7 @@ public class GestionInventarioAPP extends JFrame {
         panelInventario.add(lblValorInventario);
         add(panelInventario, BorderLayout.NORTH);
 
+        panelBotones.add(btnproveedores);
         panelBotones.add(btnAgregar);
         panelBotones.add(btnEditar);
         panelBotones.add(btnEliminar);
@@ -57,12 +59,16 @@ public class GestionInventarioAPP extends JFrame {
         add(new JScrollPane(tablaDeProductos), BorderLayout.CENTER);
         add(panelBotones, BorderLayout.SOUTH);
 
+        btnproveedores.addActionListener(e -> mostrarProveedores());
         btnAgregar.addActionListener(e -> agregarProducto());
         btnEditar.addActionListener(e -> editarProducto());
         btnEliminar.addActionListener(e -> eliminarProducto());
         btnExportarCSV.addActionListener(e -> exportarCSV());
+    }
 
-
+    private void mostrarProveedores() {
+        VistaTablaDeProveedores vistaProveedores = new VistaTablaDeProveedores();
+        vistaProveedores.setVisible(true);
     }
 
     private void agregarProducto() {

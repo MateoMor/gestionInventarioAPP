@@ -6,10 +6,12 @@ public class Proveedor {
     private String nombre;
     private String direccion;
     private String telefono;
+    private String correo;
 
     // Constructor
     public Proveedor() {
     }
+
 
     // Getters y Setters
     public int getId() {
@@ -42,5 +44,13 @@ public class Proveedor {
 
     public void setTelefono(String telefono) {
         this.telefono = telefono;
+    }
+
+    public String getCorreo() {
+        return correo;
+    }
+
+    public void setCorreo(String correo) {
+        this.correo = correo;
     }
 }
