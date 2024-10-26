@@ -7,6 +7,6 @@ public interface IProductoRepositorio {
   void agregarProducto(Producto producto);
   void eliminarProducto(Producto producto);
   void actualizarProducto(int index, Producto producto);
-  void leerCSV(String path);
+  void leerProductosCSV(String path);
   List<Producto> obtenerTodos();
 }

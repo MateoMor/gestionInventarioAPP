@@ -23,13 +23,13 @@ public class GestionInventarioAPP extends JFrame {
     private IProductoServicio productoServicio;
     private JLabel lblValorInventario;
 
-    public GestionInventarioAPP(){
+    public GestionInventarioAPP() {
         IProductoRepositorio repository = new ProductoRepositorio();
         productoServicio = new ProductoServicio(repository);
         
         modeloDeTabla = new DefaultTableModel(new String[]{"Nombre", "Precio", "Cantidad", "Fecha de vencimiento", "Proveedor"}, 0);
         tablaDeProductos = new JTable(modeloDeTabla);
-        
+    
         // Configuración de la ventana
         setTitle("Gestión de Inventario");
         setLayout(new BorderLayout());
@@ -48,6 +48,10 @@ public class GestionInventarioAPP extends JFrame {
         lblValorInventario = new JLabel("Valor de Inventario: $0.0");
         panelInventario.add(lblValorInventario);
         add(panelInventario, BorderLayout.NORTH);
+
+        // Cargar datos desde el archivo CSV
+        leerCSV();  // Llama al método para leer el archivo CSV y cargar datos
+        actualizarValor();  // Llama al método para calcular el valor del inventario
 
         panelBotones.add(btnproveedores);
         panelBotones.add(btnAgregar);
@@ -135,17 +139,18 @@ public class GestionInventarioAPP extends JFrame {
         for (Producto p : productos) {
             valorInv += p.calcularValorInventario();
         }
+        
         lblValorInventario.setText("Valor de Inventario: $" + valorInv);
     }
 
-    /* private void leerCSV() {
+    private void leerCSV() {
         try {
-            productoServicio.leerCSV();
+            productoServicio.leerProductosCSV("productos.csv");
             actualizarTabla();
         } catch (IOException e) {
             e.printStackTrace();
             JOptionPane.showMessageDialog(null, "Error al leer el archivo.");
         }
-    } */
+    }
 
 }
