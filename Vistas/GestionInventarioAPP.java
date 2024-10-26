@@ -3,7 +3,6 @@ package Vistas;
 import javax.swing.table.DefaultTableModel;
 
 import Modelo.Producto;
-import Modelo.ProductoPerecedero;
 
 import javax.swing.*;
 import java.awt.*;
@@ -28,7 +27,7 @@ public class GestionInventarioAPP extends JFrame {
         IProductoRepositorio repository = new ProductoRepositorio();
         productoServicio = new ProductoServicio(repository);
         
-        modeloDeTabla = new DefaultTableModel(new String[]{"Nombre", "Precio", "Cantidad", "Tipo", "Proveedor"}, 0);
+        modeloDeTabla = new DefaultTableModel(new String[]{"Nombre", "Precio", "Cantidad", "Fecha de vencimiento", "Proveedor"}, 0);
         tablaDeProductos = new JTable(modeloDeTabla);
         
         // Configuración de la ventana
@@ -109,9 +108,9 @@ public class GestionInventarioAPP extends JFrame {
 
     private void exportarCSV() {
          try (BufferedWriter writer = new BufferedWriter(new FileWriter("productos.csv"))) {
-            writer.write("Nombre,Precio,Cantidad,Tipo\n");
+            writer.write("Nombre,Precio,Cantidad,Fecha De Vencimiento\n");
             for (Producto p : productoServicio.obtenerTodos()) {
-                writer.write(String.format("%s,%.2f,%d,%s\n", p.getNombre(), p.getPrecio(), p.getCantidad(), p instanceof ProductoPerecedero ? "Perecedero" : "No Perecedero"));
+                writer.write(String.format("%s,%.2f,%d,%s\n", p.getNombre(), p.getPrecio(), p.getCantidad(), p.getFechaVencimiento()));
             }
             JOptionPane.showMessageDialog(null, "Productos exportados a productos.csv");
         } catch (IOException e) {
@@ -124,7 +123,7 @@ public class GestionInventarioAPP extends JFrame {
         modeloDeTabla.setRowCount(0);
         List<Producto> productos = productoServicio.obtenerTodos();
         for (Producto p : productos) {
-            modeloDeTabla.addRow(new Object[]{p.getNombre(), p.getPrecio(), p.getCantidad(), p instanceof ProductoPerecedero ? "Perecedero" : "No Perecedero"});
+            modeloDeTabla.addRow(new Object[]{p.getNombre(), p.getPrecio(), p.getCantidad(), p.getFechaVencimiento(), p.getProveedor()});
         }
 
         actualizarValor();

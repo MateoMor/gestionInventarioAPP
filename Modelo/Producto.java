@@ -1,12 +1,15 @@
 package Modelo;
 
-public abstract class Producto {
+import java.time.LocalDate;
+
+public class Producto {
     // Atributos privados
     private String nombre;
     private double precio;
     private int cantidad;
     private int proveedor;
-    
+    private LocalDate fechaVencimiento; // Almacena la fecha o null si no tiene vencimiento
+
     // Constructor
     public Producto() {
     }
@@ -43,10 +46,28 @@ public abstract class Producto {
     public void setProveedor(int proveedor) {
         this.proveedor = proveedor;
     }
-    
-    public double calcularValorInventario() {
-        return this.cantidad * this.precio ;
+
+    public LocalDate getFechaVencimiento() {
+        return fechaVencimiento;
     }
 
-    
+    /**
+     * Establece la fecha de vencimiento. 
+     * Si el producto no tiene vencimiento, asigna null.
+     */
+    public void setFechaVencimiento(LocalDate fechaVencimiento) {
+        this.fechaVencimiento = fechaVencimiento;
+    }
+
+    /**
+     * Verifica si el producto tiene fecha de vencimiento.
+     * @return true si tiene fecha de vencimiento, false si no.
+     */
+    public boolean tieneFechaDeVencimiento() {
+        return fechaVencimiento != null;
+    }
+
+    public double calcularValorInventario() {
+        return this.cantidad * this.precio;
+    }
 }
