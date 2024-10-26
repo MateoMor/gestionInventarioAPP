@@ -85,9 +85,10 @@ public class GestionInventarioAPP extends JFrame {
             productoServicio.agregarProducto(producto);
             escribirLog("Producto agregado: " + producto.getNombre());
             actualizarTabla();
+            actualizarCSV();
         }
     }
-
+    
     private void editarProducto() {
         int selectedRow = tablaDeProductos.getSelectedRow();
         if (selectedRow != -1) {
@@ -98,12 +99,13 @@ public class GestionInventarioAPP extends JFrame {
                 productoServicio.actualizarProducto(selectedRow, dialog.getProducto());
                 escribirLog("Producto editado: " + dialog.getProducto().getNombre());
                 actualizarTabla();
+                actualizarCSV();  
             }
         } else {
             JOptionPane.showMessageDialog(this, "Selecciona un producto para editar.");
         }
     }
-
+    
     private void eliminarProducto() {
         int selectedRow = tablaDeProductos.getSelectedRow();
         if (selectedRow != -1) {
@@ -111,6 +113,7 @@ public class GestionInventarioAPP extends JFrame {
             productoServicio.eliminarProducto(producto);
             escribirLog("Producto eliminado: " + producto.getNombre());
             actualizarTabla();
+            actualizarCSV(); 
         } else {
             JOptionPane.showMessageDialog(this, "Selecciona un producto para eliminar.");
         }
@@ -156,6 +159,18 @@ public class GestionInventarioAPP extends JFrame {
         } catch (IOException e) {
             e.printStackTrace();
             JOptionPane.showMessageDialog(null, "Error al leer el archivo.");
+        }
+    }
+
+    private void actualizarCSV() {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter("productos.csv"))) {
+            writer.write("Nombre,Precio,Cantidad,Fecha De Vencimiento\n");
+            for (Producto p : productoServicio.obtenerTodos()) {
+                writer.write(String.format("%s,%.2f,%d,%s\n", p.getNombre(), p.getPrecio(), p.getCantidad(), p.getFechaVencimiento()));
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(this, "Error al actualizar el archivo CSV.");
         }
     }
 
