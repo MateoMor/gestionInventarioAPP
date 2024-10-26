@@ -9,6 +9,7 @@ public class Producto {
     private int cantidad;
     private int proveedor;
     private LocalDate fechaVencimiento; // Almacena la fecha o null si no tiene vencimiento
+    private String categoria; // Nuevo atributo para la categoría
 
     // Constructor
     public Producto() {
@@ -65,6 +66,15 @@ public class Producto {
      */
     public boolean tieneFechaDeVencimiento() {
         return fechaVencimiento != null;
+    }
+
+    // Getter y Setter para categoria
+    public String getCategoria() {
+        return categoria;
+    }
+
+    public void setCategoria(String categoria) {
+        this.categoria = categoria;
     }
 
     public double calcularValorInventario() {

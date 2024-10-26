@@ -12,32 +12,37 @@ public class VistaProducto extends JDialog {
     private JTextField txtNombre;
     private JTextField txtPrecio;
     private JTextField txtCantidad;
+    private JTextField txtCategoria; // Campo para la categoría
     private Producto producto; // Variable de instancia
     private JLabel lblFecha;
     private JTextField txtFecha;
 
-
     public VistaProducto(Frame owner, String title, Producto producto) {
         super(owner, title, true);
         this.producto = producto;
-        setLayout(new GridLayout(7, 1));
-        setSize(450, 350);
+        setLayout(new GridLayout(8, 1)); // Aumentar a 8 filas para incluir la categoría
+        setSize(450, 400); // Ajustar el tamaño
 
+        // Inicializar los campos
         txtNombre = new JTextField(producto != null ? producto.getNombre() : "");
         txtPrecio = new JTextField(producto != null ? String.valueOf(producto.getPrecio()) : "");
         txtCantidad = new JTextField(producto != null ? String.valueOf(producto.getCantidad()) : "");
+        txtCategoria = new JTextField(producto != null ? producto.getCategoria() : ""); // Campo de categoría
         txtFecha = new JTextField(producto != null ? producto.getFechaVencimiento().toString() : LocalDate.now().toString());
 
         lblFecha = new JLabel("Fecha de Vencimiento");
 
         JPanel panelBotones = new JPanel();
 
+        // Agregar componentes a la ventana
         add(new JLabel("Nombre:"));
         add(txtNombre);
         add(new JLabel("Precio:"));
         add(txtPrecio);
         add(new JLabel("Cantidad:"));
         add(txtCantidad);
+        add(new JLabel("Categoría:")); // Etiqueta para categoría
+        add(txtCategoria); // Campo de categoría
         add(lblFecha);
         add(txtFecha);
 
@@ -48,6 +53,7 @@ public class VistaProducto extends JDialog {
                 nuevoProducto.setNombre(txtNombre.getText());
                 nuevoProducto.setPrecio(Double.parseDouble(txtPrecio.getText()));
                 nuevoProducto.setCantidad(Integer.parseInt(txtCantidad.getText()));
+                nuevoProducto.setCategoria(txtCategoria.getText()); // Guardar categoría
                 nuevoProducto.setFechaVencimiento(LocalDate.parse(txtFecha.getText()));
 
                 if (producto == null) {
