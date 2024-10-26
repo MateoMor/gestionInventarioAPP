@@ -25,6 +25,10 @@ public class ProductoServicio implements IProductoServicio {
         repository.actualizarProducto(index, producto);
     }
 
+    public void leerCSV(String path){
+        repository.leerCSV(path);
+    }
+
     public List<Producto> obtenerTodos() {
         return repository.obtenerTodos();
     }

@@ -139,4 +139,14 @@ public class GestionInventarioAPP extends JFrame {
         lblValorInventario.setText("Valor de Inventario: $" + valorInv);
     }
 
+    /* private void leerCSV() {
+        try {
+            productoServicio.leerCSV();
+            actualizarTabla();
+        } catch (IOException e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Error al leer el archivo.");
+        }
+    } */
+
 }
