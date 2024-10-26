@@ -43,6 +43,7 @@ public class GestionInventarioAPP extends JFrame {
         JButton btnEditar = new JButton("Editar");
         JButton btnEliminar = new JButton("Eliminar");
         JButton btnExportarCSV = new JButton("Exportar CSV");
+        JButton btnLog = new JButton("Log");
 
         JPanel panelInventario = new JPanel();
         lblValorInventario = new JLabel("Valor de Inventario: $0.0");
@@ -58,6 +59,7 @@ public class GestionInventarioAPP extends JFrame {
         panelBotones.add(btnEditar);
         panelBotones.add(btnEliminar);
         panelBotones.add(btnExportarCSV);
+        panelBotones.add(btnLog);
 
         add(new JScrollPane(tablaDeProductos), BorderLayout.CENTER);
         add(panelBotones, BorderLayout.SOUTH);
@@ -67,6 +69,7 @@ public class GestionInventarioAPP extends JFrame {
         btnEditar.addActionListener(e -> editarProducto());
         btnEliminar.addActionListener(e -> eliminarProducto());
         btnExportarCSV.addActionListener(e -> exportarCSV());
+        btnLog.addActionListener(e -> mostrarLog());
     }
 
     private void mostrarProveedores() {
@@ -80,6 +83,7 @@ public class GestionInventarioAPP extends JFrame {
         Producto producto = dialog.getProducto();
         if (producto != null) {
             productoServicio.agregarProducto(producto);
+            escribirLog("Producto agregado: " + producto.getNombre());
             actualizarTabla();
         }
     }
@@ -92,6 +96,7 @@ public class GestionInventarioAPP extends JFrame {
             dialog.setVisible(true);
             if (dialog.getProducto() != null) {
                 productoServicio.actualizarProducto(selectedRow, dialog.getProducto());
+                escribirLog("Producto editado: " + dialog.getProducto().getNombre());
                 actualizarTabla();
             }
         } else {
@@ -104,6 +109,7 @@ public class GestionInventarioAPP extends JFrame {
         if (selectedRow != -1) {
             Producto producto = productoServicio.obtenerTodos().get(selectedRow);
             productoServicio.eliminarProducto(producto);
+            escribirLog("Producto eliminado: " + producto.getNombre());
             actualizarTabla();
         } else {
             JOptionPane.showMessageDialog(this, "Selecciona un producto para eliminar.");
@@ -152,5 +158,20 @@ public class GestionInventarioAPP extends JFrame {
             JOptionPane.showMessageDialog(null, "Error al leer el archivo.");
         }
     }
+
+    private void mostrarLog() {
+        VistaLog vistaLog = new VistaLog();
+        vistaLog.setVisible(true);
+    }
+
+    private void escribirLog(String mensaje) {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter("transacciones.log", true))) {
+            writer.write(mensaje + "\n");
+        } catch (IOException e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(this, "Error al escribir en el log.");
+        }
+    }
+    
 
 }
