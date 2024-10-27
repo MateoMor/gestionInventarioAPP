@@ -27,40 +27,44 @@ public class VistaTablaDeProveedores extends JFrame {
         modeloDeTabla = new DefaultTableModel(new String[]{"ID", "Nombre", "Dirección", "Teléfono", "Correo"}, 0);
         tablaDeProveedores = new JTable(modeloDeTabla);
         
+        // Habilitar el ordenamiento en la tabla
+        tablaDeProveedores.setAutoCreateRowSorter(true);
+        
         // Configuración de la ventana
         setTitle("Gestión de Proveedores");
         setLayout(new BorderLayout());
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE); 
         setSize(750, 400);
-
+    
         setLocationRelativeTo(null);
-
+    
         // Panel de botones
         JPanel panelBotones = new JPanel();
         JButton btnAgregar = new JButton("Agregar");
         JButton btnEditar = new JButton("Editar");
         JButton btnEliminar = new JButton("Eliminar");
         JButton btnExportarCSV = new JButton("Exportar CSV");
-
+    
         JPanel panelInventario = new JPanel();
         add(panelInventario, BorderLayout.CENTER);
-
+    
         panelBotones.add(btnAgregar);
         panelBotones.add(btnEditar);
         panelBotones.add(btnEliminar);
         panelBotones.add(btnExportarCSV);
-
+    
         add(new JScrollPane(tablaDeProveedores), BorderLayout.CENTER);
         add(panelBotones, BorderLayout.SOUTH);
-
+    
         btnAgregar.addActionListener(e -> agregarProveedor());
         btnEditar.addActionListener(e -> editarProveedor());
         btnEliminar.addActionListener(e -> eliminarProveedor());
         btnExportarCSV.addActionListener(e -> exportarCSV());
-
+    
         // Cargar proveedores desde el archivo CSV
         cargarProveedoresDesdeCSV();
     }
+    
 
     private void cargarProveedoresDesdeCSV() {
         try (BufferedReader reader = new BufferedReader(new FileReader("proveedores.csv"))) {
