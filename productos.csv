@@ -1,0 +1,13 @@
+ID,Nombre,Precio,Cantidad,Fecha De Vencimiento,Proveedor,Categoría
+1,Leche UHT,2900.00,40,2025-12-01,Lacteos S.A.,alimento
+2,Carne de Res,8000.00,20,2024-11-15,Carnicería El Sabor,alimento
+3,Camiseta Deportiva,25000.00,58,2024-08-30,Indumentaria Fashion,indumentaria
+4,Tablet Android 10",400000.00,18,2025-05-20,Tecnología Innovadora,tecnologica
+5,Computador Portátil,1230000.00,123,2025-01-15,Electro Mundo,tecnologica
+6,Micrófono Profesional,345000.00,2345,2025-03-25,Sonido Perfecto,tecnologica
+7,Smartphone 5G,1500000.00,50,2025-11-10,Gadgets Globales,tecnologica
+8,Zapatillas Deportivas,85000.00,30,2024-07-20,Zapatos Rápidos,indumentaria
+9,Cereal Integral,4500.00,100,2024-10-30,Desayunos Saludables,alimento
+10,Jugo Natural de Naranja,3500.00,60,2025-04-01,Bebidas Naturales,alimento
+11,Cámara Digital,700000.00,25,2025-06-18,Fotografía Pro,tecnologica
+12,Bicicleta de Montaña,800000.00,15,2025-09-10,Ciclismo Aventura,indumentaria
