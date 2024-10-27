@@ -26,17 +26,15 @@ public class GestionInventarioAPP extends JFrame {
     public GestionInventarioAPP() {
         IProductoRepositorio repository = new ProductoRepositorio();
         productoServicio = new ProductoServicio(repository);
-        
-        modeloDeTabla = new DefaultTableModel(new String[]{"Nombre", "Precio", "Cantidad", "Fecha de vencimiento", "Proveedor", "Categoría"}, 0);
+
+        modeloDeTabla = new DefaultTableModel(new String[]{"ID", "Nombre", "Precio", "Cantidad", "Fecha de vencimiento", "Proveedor", "Categoría"}, 0);
         tablaDeProductos = new JTable(modeloDeTabla);
-    
-        // Configuración de la ventana
+
         setTitle("Gestión de Inventario");
         setLayout(new BorderLayout());
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setSize(750, 400);
 
-        // Panel de botones
         JPanel panelBotones = new JPanel();
         JButton btnproveedores = new JButton("Proveedores");
         JButton btnAgregar = new JButton("Agregar");
@@ -51,9 +49,8 @@ public class GestionInventarioAPP extends JFrame {
         panelInventario.add(lblValorInventario);
         add(panelInventario, BorderLayout.NORTH);
 
-        // Cargar datos desde el archivo CSV
-        leerCSV();  // Llama al método para leer el archivo CSV y cargar datos
-        actualizarValor();  // Llama al método para calcular el valor del inventario
+        leerCSV();
+        actualizarValor();
 
         panelBotones.add(btnModificarCantidad);
         panelBotones.add(btnAgregar);
@@ -73,7 +70,6 @@ public class GestionInventarioAPP extends JFrame {
         btnExportarCSV.addActionListener(e -> exportarCSV());
         btnLog.addActionListener(e -> mostrarLog());
         btnModificarCantidad.addActionListener(e -> modificarCantidadProducto());
-
     }
 
     private void mostrarProveedores() {
@@ -82,17 +78,35 @@ public class GestionInventarioAPP extends JFrame {
     }
 
     private void agregarProducto() {
+        // Obtener la lista de productos existentes
+        List<Producto> productosExistentes = productoServicio.obtenerTodos();
+    
+        // Determinar el ID máximo existente
+        int maxId = 0;
+        for (Producto p : productosExistentes) {
+            if (p.getId() > maxId) {
+                maxId = p.getId();
+            }   
+        }
+    
+        // Crear el nuevo producto con el nuevo ID
         VistaProducto dialog = new VistaProducto(this, "Agregar Producto", null);
         dialog.setVisible(true);
         Producto producto = dialog.getProducto();
+    
         if (producto != null) {
+            // Asignar el nuevo ID
+            producto.setId(maxId + 1);
+            
+            // Agregar el producto al servicio
             productoServicio.agregarProducto(producto);
-            escribirLog("Producto agregado: " + producto.getNombre());
+            escribirLog("Producto agregado: ID " + producto.getId() + ", Nombre: " + producto.getNombre());
             actualizarTabla();
             actualizarCSV();
         }
     }
     
+
     private void editarProducto() {
         int selectedRow = tablaDeProductos.getSelectedRow();
         if (selectedRow != -1) {
@@ -101,23 +115,23 @@ public class GestionInventarioAPP extends JFrame {
             dialog.setVisible(true);
             if (dialog.getProducto() != null) {
                 productoServicio.actualizarProducto(selectedRow, dialog.getProducto());
-                escribirLog("Producto editado: " + dialog.getProducto().getNombre());
+                escribirLog("Producto editado: ID " + producto.getId() + ", Nombre: " + producto.getNombre());
                 actualizarTabla();
-                actualizarCSV();  
+                actualizarCSV();
             }
         } else {
             JOptionPane.showMessageDialog(this, "Selecciona un producto para editar.");
         }
     }
-    
+
     private void eliminarProducto() {
         int selectedRow = tablaDeProductos.getSelectedRow();
         if (selectedRow != -1) {
             Producto producto = productoServicio.obtenerTodos().get(selectedRow);
             productoServicio.eliminarProducto(producto);
-            escribirLog("Producto eliminado: " + producto.getNombre());
+            escribirLog("Producto eliminado: ID " + producto.getId() + ", Nombre: " + producto.getNombre());
             actualizarTabla();
-            actualizarCSV(); 
+            actualizarCSV();
         } else {
             JOptionPane.showMessageDialog(this, "Selecciona un producto para eliminar.");
         }
@@ -125,15 +139,16 @@ public class GestionInventarioAPP extends JFrame {
 
     private void exportarCSV() {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter("productos.csv"))) {
-            writer.write("Nombre,Precio,Cantidad,Fecha De Vencimiento,Proveedor,Categoría\n"); // Añadir categoría
+            writer.write("ID,Nombre,Precio,Cantidad,Fecha De Vencimiento,Proveedor,Categoría\n");
             for (Producto p : productoServicio.obtenerTodos()) {
-                writer.write(String.format("%s,%.2f,%d,%s,%d,%s\n", 
-                    p.getNombre(), 
-                    p.getPrecio(), 
-                    p.getCantidad(), 
-                    p.getFechaVencimiento(), 
-                    p.getProveedor(), 
-                    p.getCategoria() // Guardar categoría
+                writer.write(String.format("%d,%s,%.2f,%d,%s,%d,%s\n",
+                    p.getId(),
+                    p.getNombre(),
+                    p.getPrecio(),
+                    p.getCantidad(),
+                    p.getFechaVencimiento(),
+                    p.getProveedor(),
+                    p.getCategoria()
                 ));
             }
             JOptionPane.showMessageDialog(null, "Productos exportados a productos.csv");
@@ -148,24 +163,24 @@ public class GestionInventarioAPP extends JFrame {
         List<Producto> productos = productoServicio.obtenerTodos();
         for (Producto p : productos) {
             modeloDeTabla.addRow(new Object[]{
-                p.getNombre(), 
-                p.getPrecio(), 
-                p.getCantidad(), 
-                p.getFechaVencimiento(), 
-                p.getProveedor(), 
-                p.getCategoria() // Añadir categoría a la tabla
+                p.getId(),
+                p.getNombre(),
+                p.getPrecio(),
+                p.getCantidad(),
+                p.getFechaVencimiento(),
+                p.getProveedor(),
+                p.getCategoria()
             });
         }
         actualizarValor();
     }
 
     private void actualizarValor() {
-        var valorInv = 0.0;
+        double valorInv = 0.0;
         List<Producto> productos = productoServicio.obtenerTodos();
         for (Producto p : productos) {
             valorInv += p.calcularValorInventario();
         }
-        
         lblValorInventario.setText("Valor de Inventario: $" + valorInv);
     }
 
@@ -181,9 +196,17 @@ public class GestionInventarioAPP extends JFrame {
 
     private void actualizarCSV() {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter("productos.csv"))) {
-            writer.write("Nombre,Precio,Cantidad,Fecha De Vencimiento\n");
+            writer.write("ID,Nombre,Precio,Cantidad,Fecha De Vencimiento,Proveedor,Categoría\n");
             for (Producto p : productoServicio.obtenerTodos()) {
-                writer.write(String.format("%s,%.2f,%d,%s\n", p.getNombre(), p.getPrecio(), p.getCantidad(), p.getFechaVencimiento()));
+                writer.write(String.format("%d,%s,%.2f,%d,%s,%d,%s\n",
+                    p.getId(),
+                    p.getNombre(),
+                    p.getPrecio(),
+                    p.getCantidad(),
+                    p.getFechaVencimiento(),
+                    p.getProveedor(),
+                    p.getCategoria()
+                ));
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -211,14 +234,11 @@ public class GestionInventarioAPP extends JFrame {
             Producto producto = productoServicio.obtenerTodos().get(selectedRow);
             VistaModificarCantidad dialog = new VistaModificarCantidad(this, "Modificar Cantidad", producto);
             dialog.setVisible(true);
-            // Actualizar la tabla después de modificar
+            escribirLog("Modificación de cantidad para producto: ID " + producto.getId() + ", Nombre: " + producto.getNombre());
             actualizarTabla();
             actualizarCSV();
         } else {
             JOptionPane.showMessageDialog(this, "Selecciona un producto para modificar su cantidad.");
         }
     }
-    
-    
-
 }

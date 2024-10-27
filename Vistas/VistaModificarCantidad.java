@@ -6,6 +6,7 @@ import java.awt.*;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.time.LocalDate;
 
 public class VistaModificarCantidad extends JDialog {
     private JTextField txtNombre;
@@ -13,14 +14,14 @@ public class VistaModificarCantidad extends JDialog {
     private JTextField txtCantidad;
     private JButton btnAumentar;
     private JButton btnDisminuir;
-    private JButton btnAplicar; // Botón para aplicar la cantidad manualmente
+    private JButton btnAplicar;
     private Producto producto;
 
     public VistaModificarCantidad(Frame owner, String title, Producto producto) {
         super(owner, title, true);
         this.producto = producto;
 
-        setLayout(new GridLayout(7, 1)); // Aumentamos las filas para el nuevo botón
+        setLayout(new GridLayout(7, 1));
         setSize(300, 200);
 
         txtNombre = new JTextField(producto.getNombre());
@@ -29,11 +30,11 @@ public class VistaModificarCantidad extends JDialog {
 
         txtNombre.setEditable(false);
         txtPrecio.setEditable(false);
-        txtCantidad.setEditable(true); // Permitir editar la cantidad
+        txtCantidad.setEditable(true);
 
         btnAumentar = new JButton("Aumentar");
         btnDisminuir = new JButton("Disminuir");
-        btnAplicar = new JButton("Aplicar"); // Botón para aplicar cambios manualmente
+        btnAplicar = new JButton("Aplicar");
 
         add(new JLabel("Nombre:"));
         add(txtNombre);
@@ -43,55 +44,32 @@ public class VistaModificarCantidad extends JDialog {
         add(txtCantidad);
         add(btnAumentar);
         add(btnDisminuir);
-        add(btnAplicar); // Agregar el botón para aplicar cambios
+        add(btnAplicar);
 
-        btnAumentar.addActionListener(e -> modificarCantidad(1)); // Aumentar cantidad
-        btnDisminuir.addActionListener(e -> modificarCantidad(-1)); // Disminuir cantidad
-        btnAplicar.addActionListener(e -> aplicarCantidad()); // Aplicar cantidad manualmente
+        btnAumentar.addActionListener(e -> modificarCantidad(true));
+        btnDisminuir.addActionListener(e -> modificarCantidad(false));
+        btnAplicar.addActionListener(e -> aplicarCambio());
+
+        setLocationRelativeTo(owner);
     }
 
-    private void modificarCantidad(int cantidad) {
-        // Solo modifica la cantidad en la interfaz sin guardar en el log
+    private void modificarCantidad(boolean aumentar) {
         int cantidadActual = Integer.parseInt(txtCantidad.getText());
-        int nuevaCantidad = cantidadActual + cantidad;
-        
-        if (nuevaCantidad >= 0) {
-            txtCantidad.setText(String.valueOf(nuevaCantidad));
-        } else {
-            JOptionPane.showMessageDialog(this, "La cantidad no puede ser negativa.");
-        }
+        cantidadActual += aumentar ? 1 : -1;
+        txtCantidad.setText(String.valueOf(cantidadActual));
     }
 
-    private void aplicarCantidad() {
-        String motivo = JOptionPane.showInputDialog(this, "Ingresa el motivo de la modificación:");
-        
-        if (motivo != null && !motivo.trim().isEmpty()) {
-            try {
-                int cantidadActual = producto.getCantidad(); // Cantidad antes del cambio
-                int nuevaCantidad = Integer.parseInt(txtCantidad.getText());
-                int cambioCantidad = nuevaCantidad - cantidadActual; // Diferencia entre las cantidades
-
-                if (nuevaCantidad >= 0) {
-                    producto.setCantidad(nuevaCantidad); // Actualizar la cantidad en el producto
-                    escribirLog("Cambio manualmente aplicado: " + producto.getNombre() + 
-                                ", cambio: " + (cambioCantidad > 0 ? "+" : "") + cambioCantidad + 
-                                ", cantidad final: " + nuevaCantidad + 
-                                ". Motivo: " + motivo);
-                    dispose(); // Cerrar la ventana al aplicar
-                } else {
-                    JOptionPane.showMessageDialog(this, "La cantidad no puede ser negativa.");
-                }
-            } catch (NumberFormatException e) {
-                JOptionPane.showMessageDialog(this, "Por favor, ingresa un número válido para la cantidad.");
-            }
-        } else {
-            JOptionPane.showMessageDialog(this, "El motivo no puede estar vacío.");
-        }
+    private void aplicarCambio() {
+        int cantidadModificada = Integer.parseInt(txtCantidad.getText());
+        producto.setCantidad(cantidadModificada);
+        escribirLog("Modificación de cantidad aplicada: " + cantidadModificada);
+        dispose();
     }
 
     private void escribirLog(String mensaje) {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter("transacciones.log", true))) {
-            writer.write(mensaje + "\n");
+            String logMessage = LocalDate.now() + " - " + mensaje + " - ID " + producto.getId();
+            writer.write(logMessage + "\n");
         } catch (IOException e) {
             e.printStackTrace();
             JOptionPane.showMessageDialog(this, "Error al escribir en el log.");

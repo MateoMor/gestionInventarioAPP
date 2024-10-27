@@ -4,6 +4,7 @@ import java.time.LocalDate;
 
 public class Producto {
     // Atributos privados
+    private int id;
     private String nombre;
     private double precio;
     private int cantidad;
@@ -16,6 +17,14 @@ public class Producto {
     }
 
     // Getters y Setters
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
     public String getNombre() {
         return nombre;
     }

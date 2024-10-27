@@ -46,20 +46,30 @@ public class ProductoRepositorio implements IProductoRepositorio {
                 String[] values = line.split(COMMA_DELIMITER);
                 if (values.length >= 4) { // Asegúrate de que hay suficientes columnas
                     Producto producto = new Producto();
-                    producto.setNombre(values[0]);
+    
+                    // Parsear ID como Integer
+                    producto.setId(Integer.parseInt(values[0])); // Asignar el ID desde el CSV
+    
+                    // Establecer nombre
+                    producto.setNombre(values[1]);
     
                     // Parsear precio como Double
-                    producto.setPrecio(Double.parseDouble(values[1]));
+                    producto.setPrecio(Double.parseDouble(values[2]));
     
                     // Parsear cantidad como Integer
-                    producto.setCantidad(Integer.parseInt(values[2]));
+                    producto.setCantidad(Integer.parseInt(values[3]));
     
                     // Si hay una fecha de vencimiento en la cuarta columna
-                    if (values.length > 3 && !values[3].isEmpty()) {
-                        LocalDate fechaVencimiento = LocalDate.parse(values[3], DateTimeFormatter.ISO_DATE);
+                    if (values.length > 4 && !values[4].isEmpty()) {
+                        LocalDate fechaVencimiento = LocalDate.parse(values[4], DateTimeFormatter.ISO_DATE);
                         producto.setFechaVencimiento(fechaVencimiento);
                     } else {
                         producto.setFechaVencimiento(null); // Sin fecha de vencimiento
+                    }
+    
+                    // Si hay una categoría en la sexta columna (opcional, ajustar si es necesario)
+                    if (values.length > 6) {
+                        producto.setCategoria(values[6]); // Asumiendo que hay un método setCategoria
                     }
     
                     productos.add(producto); // Agregar el producto a la lista
@@ -71,6 +81,7 @@ public class ProductoRepositorio implements IProductoRepositorio {
             e.printStackTrace(); // Manejo de errores por formato de número
         }
     }
+    
     
 
     public List<Producto> obtenerTodos() {
