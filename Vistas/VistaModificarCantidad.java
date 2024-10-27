@@ -33,7 +33,7 @@ public class VistaModificarCantidad extends JDialog {
 
         btnAumentar = new JButton("Aumentar");
         btnDisminuir = new JButton("Disminuir");
-        btnAplicar = new JButton("Aplicar"); // Botón para aplicar cambios manuales
+        btnAplicar = new JButton("Aplicar"); // Botón para aplicar cambios manualmente
 
         add(new JLabel("Nombre:"));
         add(txtNombre);
@@ -51,10 +51,11 @@ public class VistaModificarCantidad extends JDialog {
     }
 
     private void modificarCantidad(int cantidad) {
-        int cantidadActual = producto.getCantidad();
+        // Solo modifica la cantidad en la interfaz sin guardar en el log
+        int cantidadActual = Integer.parseInt(txtCantidad.getText());
         int nuevaCantidad = cantidadActual + cantidad;
+        
         if (nuevaCantidad >= 0) {
-            producto.setCantidad(nuevaCantidad);
             txtCantidad.setText(String.valueOf(nuevaCantidad));
         } else {
             JOptionPane.showMessageDialog(this, "La cantidad no puede ser negativa.");
@@ -66,12 +67,15 @@ public class VistaModificarCantidad extends JDialog {
         
         if (motivo != null && !motivo.trim().isEmpty()) {
             try {
+                int cantidadActual = producto.getCantidad(); // Cantidad antes del cambio
                 int nuevaCantidad = Integer.parseInt(txtCantidad.getText());
-                int cantidadActual = producto.getCantidad(); // Obtener la cantidad actual antes de aplicar cambios
+                int cambioCantidad = nuevaCantidad - cantidadActual; // Diferencia entre las cantidades
+
                 if (nuevaCantidad >= 0) {
-                    producto.setCantidad(nuevaCantidad);
-                    escribirLog("Cantidad manualmente aplicada: " + producto.getNombre() + 
-                                ", cantidad cambiada de " + cantidadActual + " a " + nuevaCantidad + 
+                    producto.setCantidad(nuevaCantidad); // Actualizar la cantidad en el producto
+                    escribirLog("Cambio manualmente aplicado: " + producto.getNombre() + 
+                                ", cambio: " + (cambioCantidad > 0 ? "+" : "") + cambioCantidad + 
+                                ", cantidad final: " + nuevaCantidad + 
                                 ". Motivo: " + motivo);
                     dispose(); // Cerrar la ventana al aplicar
                 } else {
