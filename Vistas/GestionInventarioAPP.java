@@ -1,16 +1,14 @@
 package Vistas;
 
 import javax.swing.table.DefaultTableModel;
-
+import javax.swing.table.TableRowSorter;
 import Modelo.Producto;
-
 import javax.swing.*;
 import java.awt.*;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.List;
-
 import Repositorio.IProductoRepositorio;
 import Repositorio.ProductoRepositorio;
 import Servicios.IProductoServicio;
@@ -29,6 +27,10 @@ public class GestionInventarioAPP extends JFrame {
 
         modeloDeTabla = new DefaultTableModel(new String[]{"ID", "Nombre", "Precio", "Cantidad", "Fecha de vencimiento", "Proveedor", "Categoría"}, 0);
         tablaDeProductos = new JTable(modeloDeTabla);
+        
+        // Configura el ordenamiento
+        TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<>(modeloDeTabla);
+        tablaDeProductos.setRowSorter(sorter);
 
         setTitle("Gestión de Inventario");
         setLayout(new BorderLayout());
