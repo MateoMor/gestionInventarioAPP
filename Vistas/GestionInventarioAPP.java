@@ -44,6 +44,7 @@ public class GestionInventarioAPP extends JFrame {
         JButton btnEliminar = new JButton("Eliminar");
         JButton btnExportarCSV = new JButton("Exportar CSV");
         JButton btnLog = new JButton("Log");
+        JButton btnModificarCantidad = new JButton("Modificar Cantidad");
 
         JPanel panelInventario = new JPanel();
         lblValorInventario = new JLabel("Valor de Inventario: $0.0");
@@ -54,11 +55,12 @@ public class GestionInventarioAPP extends JFrame {
         leerCSV();  // Llama al método para leer el archivo CSV y cargar datos
         actualizarValor();  // Llama al método para calcular el valor del inventario
 
-        panelBotones.add(btnproveedores);
+        panelBotones.add(btnModificarCantidad);
         panelBotones.add(btnAgregar);
         panelBotones.add(btnEditar);
         panelBotones.add(btnEliminar);
         panelBotones.add(btnExportarCSV);
+        panelBotones.add(btnproveedores);
         panelBotones.add(btnLog);
 
         add(new JScrollPane(tablaDeProductos), BorderLayout.CENTER);
@@ -70,6 +72,8 @@ public class GestionInventarioAPP extends JFrame {
         btnEliminar.addActionListener(e -> eliminarProducto());
         btnExportarCSV.addActionListener(e -> exportarCSV());
         btnLog.addActionListener(e -> mostrarLog());
+        btnModificarCantidad.addActionListener(e -> modificarCantidadProducto());
+
     }
 
     private void mostrarProveedores() {
@@ -200,6 +204,21 @@ public class GestionInventarioAPP extends JFrame {
             JOptionPane.showMessageDialog(this, "Error al escribir en el log.");
         }
     }
+
+    private void modificarCantidadProducto() {
+        int selectedRow = tablaDeProductos.getSelectedRow();
+        if (selectedRow != -1) {
+            Producto producto = productoServicio.obtenerTodos().get(selectedRow);
+            VistaModificarCantidad dialog = new VistaModificarCantidad(this, "Modificar Cantidad", producto);
+            dialog.setVisible(true);
+            // Actualizar la tabla después de modificar
+            actualizarTabla();
+            actualizarCSV();
+        } else {
+            JOptionPane.showMessageDialog(this, "Selecciona un producto para modificar su cantidad.");
+        }
+    }
+    
     
 
 }
