@@ -54,7 +54,6 @@ public class GestionInventarioAPP extends JFrame {
         JButton btnAgregar = new JButton("Agregar");
         JButton btnEditar = new JButton("Editar");
         JButton btnEliminar = new JButton("Eliminar");
-        JButton btnExportarCSV = new JButton("Exportar CSV");
         JButton btnLog = new JButton("Log");
         JButton btnModificarCantidad = new JButton("Modificar Cantidad");
 
@@ -70,7 +69,6 @@ public class GestionInventarioAPP extends JFrame {
         panelBotones.add(btnAgregar);
         panelBotones.add(btnEditar);
         panelBotones.add(btnEliminar);
-        panelBotones.add(btnExportarCSV);
         panelBotones.add(btnProveedores);
         panelBotones.add(btnLog);
 
@@ -81,7 +79,6 @@ public class GestionInventarioAPP extends JFrame {
         btnAgregar.addActionListener(e -> agregarProducto());
         btnEditar.addActionListener(e -> editarProducto());
         btnEliminar.addActionListener(e -> eliminarProducto());
-        btnExportarCSV.addActionListener(e -> exportarCSV());
         btnLog.addActionListener(e -> mostrarLog());
         btnModificarCantidad.addActionListener(e -> modificarCantidadProducto());
     }
@@ -143,7 +140,6 @@ public class GestionInventarioAPP extends JFrame {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter("productos.csv"))) {
             writer.write("ID,Nombre,Precio,Cantidad,Fecha De Vencimiento,Proveedor,Categoría\n");
             for (Producto p : productoServicio.obtenerTodos()) {
-                System.out.println(p.getProveedor());
                 writer.write(String.format("%d,%s,%.2f,%d,%s,%s,%s\n",
                     p.getId(),
                     p.getNombre(),
@@ -154,7 +150,6 @@ public class GestionInventarioAPP extends JFrame {
                     p.getCategoria()
                 ));
             }
-            JOptionPane.showMessageDialog(null, "Productos exportados a productos.csv");
         } catch (IOException e) {
             e.printStackTrace();
             JOptionPane.showMessageDialog(null, "Error al exportar el archivo.");
