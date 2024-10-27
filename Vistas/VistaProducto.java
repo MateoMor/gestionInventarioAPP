@@ -1,83 +1,101 @@
 package Vistas;
 
-import java.awt.BorderLayout;
-import java.awt.Frame;
-import java.awt.GridLayout;
-import javax.swing.*;
-import java.time.LocalDate;
 import Modelo.Producto;
+import Modelo.Proveedor; // Asegúrate de importar tu clase Proveedor
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
 
 public class VistaProducto extends JDialog {
-
     private JTextField txtNombre;
     private JTextField txtPrecio;
     private JTextField txtCantidad;
-    private JTextField txtCategoria; // Campo para la categoría
-    private Producto producto; // Variable de instancia
-    private JLabel lblFecha;
-    private JTextField txtFecha;
+    private JTextField txtFechaVencimiento;
+    private JComboBox<Proveedor> cbProveedor; // Cambiado a Proveedor
+    private JTextField txtCategoria; // Cambiado a JTextField
+    private Producto producto;
 
-    public VistaProducto(Frame owner, String title, Producto producto) {
-        super(owner, title, true);
+    public VistaProducto(Frame parent, String title, Producto producto, List<Proveedor> proveedores) {
+        super(parent, title, true);
         this.producto = producto;
-        setLayout(new GridLayout(8, 1)); // Aumentar a 8 filas para incluir la categoría
-        setSize(450, 400); // Ajustar el tamaño
 
-        // Inicializar los campos
-        txtNombre = new JTextField(producto != null ? producto.getNombre() : "");
-        txtPrecio = new JTextField(producto != null ? String.valueOf(producto.getPrecio()) : "");
-        txtCantidad = new JTextField(producto != null ? String.valueOf(producto.getCantidad()) : "");
-        txtCategoria = new JTextField(producto != null ? producto.getCategoria() : ""); // Campo de categoría
-        txtFecha = new JTextField(producto != null ? producto.getFechaVencimiento().toString() : LocalDate.now().toString());
+        setLayout(new GridLayout(7, 2));
 
-        lblFecha = new JLabel("Fecha de Vencimiento");
-
-        JPanel panelBotones = new JPanel();
-
-        // Agregar componentes a la ventana
         add(new JLabel("Nombre:"));
+        txtNombre = new JTextField();
         add(txtNombre);
+
         add(new JLabel("Precio:"));
+        txtPrecio = new JTextField();
         add(txtPrecio);
+
         add(new JLabel("Cantidad:"));
+        txtCantidad = new JTextField();
         add(txtCantidad);
-        add(new JLabel("Categoría:")); // Etiqueta para categoría
-        add(txtCategoria); // Campo de categoría
-        add(lblFecha);
-        add(txtFecha);
 
-        JButton btnAceptar = new JButton("Aceptar");
-        btnAceptar.addActionListener(e -> {
-            if (validarCampos()) {
-                Producto nuevoProducto = producto != null ? producto : new Producto(); // Crea una nueva variable
-                nuevoProducto.setNombre(txtNombre.getText());
-                nuevoProducto.setPrecio(Double.parseDouble(txtPrecio.getText()));
-                nuevoProducto.setCantidad(Integer.parseInt(txtCantidad.getText()));
-                nuevoProducto.setCategoria(txtCategoria.getText()); // Guardar categoría
-                nuevoProducto.setFechaVencimiento(LocalDate.parse(txtFecha.getText()));
+        add(new JLabel("Fecha de Vencimiento (YYYY-MM-DD):"));
+        txtFechaVencimiento = new JTextField();
+        add(txtFechaVencimiento);
 
-                if (producto == null) {
-                    this.producto = nuevoProducto; // Asigna el nuevo producto a la variable de instancia
-                }
+        add(new JLabel("Proveedor:"));
+        cbProveedor = new JComboBox<>(proveedores.toArray(new Proveedor[0])); // Llenar el combo con proveedores
+        add(cbProveedor);
 
-                dispose();
+        add(new JLabel("Categoría:"));
+        txtCategoria = new JTextField(); // Campo de texto para categoría
+        add(txtCategoria);
+
+        JButton btnGuardar = new JButton("Guardar");
+        btnGuardar.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                guardarProducto();
             }
         });
+        add(btnGuardar);
 
-        panelBotones.add(btnAceptar);
-        add(panelBotones, BorderLayout.CENTER);
+        JButton btnCancelar = new JButton("Cancelar");
+        btnCancelar.addActionListener(e -> dispose());
+        add(btnCancelar);
+
+        if (producto != null) {
+            txtNombre.setText(producto.getNombre());
+            txtPrecio.setText(String.valueOf(producto.getPrecio()));
+            txtCantidad.setText(String.valueOf(producto.getCantidad()));
+            txtFechaVencimiento.setText(producto.getFechaVencimiento().toString()); // Suponiendo que el formato es YYYY-MM-DD
+            cbProveedor.setSelectedItem(producto.getProveedor()); // Se selecciona el proveedor correspondiente
+            txtCategoria.setText(producto.getCategoria()); // Se establece la categoría correspondiente
+        }
+
+        setSize(400, 300);
+        setLocationRelativeTo(parent);
     }
 
-    private boolean validarCampos() {
-        // Validaciones básicas
-        try {
-            Double.parseDouble(txtPrecio.getText());
-            Integer.parseInt(txtCantidad.getText());
-            return true;
-        } catch (NumberFormatException e) {
-            JOptionPane.showMessageDialog(this, "Precio y cantidad deben ser numéricos.");
-            return false;
+    private void guardarProducto() {
+        String nombre = txtNombre.getText();
+        double precio = Double.parseDouble(txtPrecio.getText());
+        int cantidad = Integer.parseInt(txtCantidad.getText());
+        LocalDate fechaVencimiento = LocalDate.parse(txtFechaVencimiento.getText(), DateTimeFormatter.ISO_LOCAL_DATE);
+        Proveedor proveedor = (Proveedor) cbProveedor.getSelectedItem(); // Cambiado a Proveedor
+        String categoria = txtCategoria.getText(); // Obtener categoría desde el campo de texto
+
+        if (producto == null) {
+            producto = new Producto();
         }
+
+        producto.setNombre(nombre);
+        producto.setPrecio(precio);
+        producto.setCantidad(cantidad);
+        producto.setFechaVencimiento(fechaVencimiento);
+        producto.setProveedor(proveedor.getNombre());
+        producto.setCategoria(categoria);
+
+        dispose();
     }
 
     public Producto getProducto() {

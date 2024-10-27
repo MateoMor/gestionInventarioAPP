@@ -17,16 +17,25 @@ public class ProveedorRepositorio implements IProveedorRepositorio {
     }
 
     public void eliminarProveedor(Proveedor proveedor) {
-        proveedores.remove(proveedor);
+        if (proveedor != null) {
+            proveedores.remove(proveedor);
+        }
     }
 
-    public void actualizarProveedor(int index, Proveedor proveedor) {
-        if(index >= 0 && index < proveedores.size()) {
-            proveedores.set(index, proveedor);
+    public void eliminarProveedorPorId(int id) {
+        proveedores.removeIf(proveedor -> proveedor.getId() == id);
+    }
+
+    public void actualizarProveedor(int id, Proveedor proveedor) {
+        for (int i = 0; i < proveedores.size(); i++) {
+            if (proveedores.get(i).getId() == id) {
+                proveedores.set(i, proveedor);
+                return;
+            }
         }
     }
 
     public List<Proveedor> obtenerTodos() {
-        return proveedores;
+        return new ArrayList<>(proveedores); // Devuelve una copia inmutable de la lista
     }
 }

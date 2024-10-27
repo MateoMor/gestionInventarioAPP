@@ -19,8 +19,26 @@ public class ProveedorServicio implements IProveedorServicio {
         repository.eliminarProveedor(proveedor);
     }
 
-    public void actualizarProveedor(int index, Proveedor proveedor) {
-        repository.actualizarProveedor(index, proveedor);
+    public void eliminarProveedorPorId(int id) {
+        // Lógica para eliminar el proveedor por ID
+        List<Proveedor> proveedores = repository.obtenerTodos();
+        for (Proveedor p : proveedores) {
+            if (p.getId() == id) {
+                repository.eliminarProveedor(p);
+                break; // Salir del bucle una vez encontrado
+            }
+        }
+    }
+
+    public void actualizarProveedor(int id, Proveedor proveedor) {
+        // Lógica para actualizar el proveedor por ID
+        List<Proveedor> proveedores = repository.obtenerTodos();
+        for (int i = 0; i < proveedores.size(); i++) {
+            if (proveedores.get(i).getId() == id) {
+                repository.actualizarProveedor(i, proveedor); // Actualiza en el repositorio
+                break; // Salir del bucle una vez encontrado
+            }
+        }
     }
 
     public List<Proveedor> obtenerTodos() {

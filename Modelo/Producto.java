@@ -8,9 +8,10 @@ public class Producto {
     private String nombre;
     private double precio;
     private int cantidad;
-    private int proveedor;
-    private LocalDate fechaVencimiento; // Almacena la fecha o null si no tiene vencimiento
-    private String categoria; // Nuevo atributo para la categoría
+    private String proveedor;
+    private LocalDate fechaVencimiento;
+    private int proveedorId;
+    private String categoria;
 
     // Constructor
     public Producto() {
@@ -49,11 +50,19 @@ public class Producto {
         this.cantidad = cantidad;
     }
 
-    public int getProveedor() {
+    public int getProveedorId() {
+        return proveedorId;
+    }
+
+    public void setProveedorId(int proveedorId) {
+        this.proveedorId = proveedorId;
+    }
+
+    public String getProveedor() {
         return proveedor;
     }
 
-    public void setProveedor(int proveedor) {
+    public void setProveedor(String proveedor) {
         this.proveedor = proveedor;
     }
 
