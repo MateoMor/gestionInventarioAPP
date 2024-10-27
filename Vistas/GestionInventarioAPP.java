@@ -19,13 +19,12 @@ import Servicios.IProductoServicio;
 import Servicios.ProductoServicio;
 import Servicios.ProveedorServicio;
 
-
 public class GestionInventarioAPP extends JFrame {
 
     private JTable tablaDeProductos;
     private DefaultTableModel modeloDeTabla;
     private IProductoServicio productoServicio;
-    private ProveedorServicio proveedorServicio; 
+    private ProveedorServicio proveedorServicio;
     private JLabel lblValorInventario;
 
     public GestionInventarioAPP() {
@@ -34,11 +33,14 @@ public class GestionInventarioAPP extends JFrame {
         productoServicio = new ProductoServicio(productoRepository);
         proveedorServicio = new ProveedorServicio(proveedorRepository);
 
-        // Ajustado el modelo de tabla para manejar la categoría como un String
+        // Cargar proveedores desde el archivo CSV al abrir la aplicación
+        proveedorServicio.cargarProveedoresDesdeCSV("proveedores.csv");
+
+        // Configuración de la tabla para mostrar productos
         modeloDeTabla = new DefaultTableModel(new String[]{"ID", "Nombre", "Precio", "Cantidad", "Fecha de Vencimiento", "Proveedor", "Categoría"}, 0);
         tablaDeProductos = new JTable(modeloDeTabla);
-        
-        // Configura el ordenamiento
+
+        // Configuración de ordenamiento
         TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<>(modeloDeTabla);
         tablaDeProductos.setRowSorter(sorter);
 
@@ -90,34 +92,23 @@ public class GestionInventarioAPP extends JFrame {
     }
 
     private void agregarProducto() {
-        // Obtener la lista de productos existentes
         List<Producto> productosExistentes = productoServicio.obtenerTodos();
-        
-        // Determinar el ID máximo existente
-        int maxId = 0;
-        for (Producto p : productosExistentes) {
-            if (p.getId() > maxId) {
-                maxId = p.getId();
-            }   
-        }
-        
-        // Crear el nuevo producto con el nuevo ID
+        int maxId = productosExistentes.stream().mapToInt(Producto::getId).max().orElse(0);
+
         VistaProducto dialog = new VistaProducto(this, "Agregar Producto", null, obtenerProveedores());
         dialog.setVisible(true);
+
         Producto producto = dialog.getProducto();
-        
+
         if (producto != null) {
-            // Asignar el nuevo ID
             producto.setId(maxId + 1);
-            
-            // Agregar el producto al servicio
             productoServicio.agregarProducto(producto);
             escribirLog("Producto agregado: ID " + producto.getId() + ", Nombre: " + producto.getNombre());
             actualizarTabla();
             actualizarCSV();
         }
     }
-    
+
     private void editarProducto() {
         int selectedRow = tablaDeProductos.getSelectedRow();
         if (selectedRow != -1) {
@@ -125,7 +116,7 @@ public class GestionInventarioAPP extends JFrame {
             VistaProducto dialog = new VistaProducto(this, "Editar Producto", producto, obtenerProveedores());
             dialog.setVisible(true);
             if (dialog.getProducto() != null) {
-                productoServicio.actualizarProducto(producto.getId(), dialog.getProducto()); // Usar ID para la actualización
+                productoServicio.actualizarProducto(producto.getId(), dialog.getProducto());
                 escribirLog("Producto editado: ID " + producto.getId() + ", Nombre: " + producto.getNombre());
                 actualizarTabla();
                 actualizarCSV();
@@ -152,13 +143,14 @@ public class GestionInventarioAPP extends JFrame {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter("productos.csv"))) {
             writer.write("ID,Nombre,Precio,Cantidad,Fecha De Vencimiento,Proveedor,Categoría\n");
             for (Producto p : productoServicio.obtenerTodos()) {
+                System.out.println(p.getProveedor());
                 writer.write(String.format("%d,%s,%.2f,%d,%s,%s,%s\n",
                     p.getId(),
                     p.getNombre(),
                     p.getPrecio(),
                     p.getCantidad(),
                     p.getFechaVencimiento(),
-                    p.getProveedor() != null ? p.getProveedor() : "", // Asegúrate de que el proveedor tenga un método getNombre()
+                    p.getProveedor() != null ? p.getProveedor() : "",
                     p.getCategoria()
                 ));
             }
@@ -179,7 +171,7 @@ public class GestionInventarioAPP extends JFrame {
                 p.getPrecio(),
                 p.getCantidad(),
                 p.getFechaVencimiento(),
-                p.getProveedor() != null ? p.getProveedor() : "", // Muestra el nombre del proveedor
+                p.getProveedor() != null ? p.getProveedor() : "",
                 p.getCategoria()
             });
         }
@@ -187,11 +179,7 @@ public class GestionInventarioAPP extends JFrame {
     }
 
     private void actualizarValor() {
-        double valorInv = 0.0;
-        List<Producto> productos = productoServicio.obtenerTodos();
-        for (Producto p : productos) {
-            valorInv += p.calcularValorInventario();
-        }
+        double valorInv = productoServicio.obtenerTodos().stream().mapToDouble(Producto::calcularValorInventario).sum();
         lblValorInventario.setText("Valor de Inventario: $" + valorInv);
     }
 
@@ -206,23 +194,7 @@ public class GestionInventarioAPP extends JFrame {
     }
 
     private void actualizarCSV() {
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter("productos.csv"))) {
-            writer.write("ID,Nombre,Precio,Cantidad,Fecha De Vencimiento,Proveedor,Categoría\n");
-            for (Producto p : productoServicio.obtenerTodos()) {
-                writer.write(String.format("%d,%s,%.2f,%d,%s,%s,%s\n",
-                    p.getId(),
-                    p.getNombre(),
-                    p.getPrecio(),
-                    p.getCantidad(),
-                    p.getFechaVencimiento(),
-                    p.getProveedor() != null ? p.getProveedor() : "", // Asegúrate de que el proveedor tenga un método getNombre()
-                    p.getCategoria()
-                ));
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-            JOptionPane.showMessageDialog(this, "Error al actualizar el archivo CSV.");
-        }
+        exportarCSV();
     }
 
     private void mostrarLog() {

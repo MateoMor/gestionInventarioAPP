@@ -1,8 +1,9 @@
 package Servicios;
 
-import java.util.List;
 import Modelo.Proveedor;
 import Repositorio.IProveedorRepositorio;
+
+import java.util.List;
 
 public class ProveedorServicio implements IProveedorServicio {
     private IProveedorRepositorio repository;
@@ -20,25 +21,27 @@ public class ProveedorServicio implements IProveedorServicio {
     }
 
     public void eliminarProveedorPorId(int id) {
-        // Lógica para eliminar el proveedor por ID
         List<Proveedor> proveedores = repository.obtenerTodos();
         for (Proveedor p : proveedores) {
             if (p.getId() == id) {
                 repository.eliminarProveedor(p);
-                break; // Salir del bucle una vez encontrado
+                break;
             }
         }
     }
 
     public void actualizarProveedor(int id, Proveedor proveedor) {
-        // Lógica para actualizar el proveedor por ID
         List<Proveedor> proveedores = repository.obtenerTodos();
         for (int i = 0; i < proveedores.size(); i++) {
             if (proveedores.get(i).getId() == id) {
-                repository.actualizarProveedor(i, proveedor); // Actualiza en el repositorio
-                break; // Salir del bucle una vez encontrado
+                repository.actualizarProveedor(i, proveedor);
+                break;
             }
         }
+    }
+
+    public void cargarProveedoresDesdeCSV(String rutaArchivo) {
+        repository.cargarProveedoresDesdeCSV(rutaArchivo);
     }
 
     public List<Proveedor> obtenerTodos() {

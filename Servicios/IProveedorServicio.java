@@ -6,7 +6,8 @@ import Modelo.Proveedor;
 public interface IProveedorServicio {
     void agregarProveedor(Proveedor proveedor);
     void eliminarProveedor(Proveedor proveedor);
-    void eliminarProveedorPorId(int id); // Nuevo método para eliminar por ID
-    void actualizarProveedor(int id, Proveedor proveedor); // Actualización por ID
+    void eliminarProveedorPorId(int id); 
+    void actualizarProveedor(int id, Proveedor proveedor); 
+    void cargarProveedoresDesdeCSV(String rutaArchivo);
     List<Proveedor> obtenerTodos();
 }

@@ -44,7 +44,7 @@ public class ProductoRepositorio implements IProductoRepositorio {
                 }
     
                 String[] values = line.split(COMMA_DELIMITER);
-                if (values.length >= 4) { // Asegúrate de que hay suficientes columnas
+                if (values.length >= 6) { // Asegúrate de que hay suficientes columnas
                     Producto producto = new Producto();
     
                     // Parsear ID como Integer
@@ -60,14 +60,19 @@ public class ProductoRepositorio implements IProductoRepositorio {
                     producto.setCantidad(Integer.parseInt(values[3]));
     
                     // Si hay una fecha de vencimiento en la cuarta columna
-                    if (values.length > 4 && !values[4].isEmpty()) {
+                    if (!values[4].isEmpty()) {
                         LocalDate fechaVencimiento = LocalDate.parse(values[4], DateTimeFormatter.ISO_DATE);
                         producto.setFechaVencimiento(fechaVencimiento);
                     } else {
                         producto.setFechaVencimiento(null); // Sin fecha de vencimiento
                     }
     
-                    // Si hay una categoría en la sexta columna (opcional, ajustar si es necesario)
+                    // Asignar proveedor (puede estar vacío)
+                    if (!values[5].isEmpty()) {
+                        producto.setProveedor(values[5]); // Asignar el nombre del proveedor desde el CSV
+                    } 
+    
+                    // Si hay una categoría en la séptima columna
                     if (values.length > 6) {
                         producto.setCategoria(values[6]); // Asumiendo que hay un método setCategoria
                     }

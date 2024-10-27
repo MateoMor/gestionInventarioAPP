@@ -1,12 +1,11 @@
 package Vistas;
 
 import Modelo.Producto;
-import Modelo.Proveedor; // Asegúrate de importar tu clase Proveedor
+import Modelo.Proveedor;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -16,8 +15,8 @@ public class VistaProducto extends JDialog {
     private JTextField txtPrecio;
     private JTextField txtCantidad;
     private JTextField txtFechaVencimiento;
-    private JComboBox<Proveedor> cbProveedor; // Cambiado a Proveedor
-    private JTextField txtCategoria; // Cambiado a JTextField
+    private JComboBox<String> cbProveedor; 
+    private JTextField txtCategoria; // Campo de texto para la categoría
     private Producto producto;
 
     public VistaProducto(Frame parent, String title, Producto producto, List<Proveedor> proveedores) {
@@ -42,8 +41,15 @@ public class VistaProducto extends JDialog {
         txtFechaVencimiento = new JTextField();
         add(txtFechaVencimiento);
 
+        // Convertir la lista de objetos Proveedor a una lista de nombres de proveedores
+        String[] nombresProveedores = proveedores.stream()
+        .map(Proveedor::getNombre) // Obtener solo el nombre de cada proveedor
+        .toArray(String[]::new);
+
+
         add(new JLabel("Proveedor:"));
-        cbProveedor = new JComboBox<>(proveedores.toArray(new Proveedor[0])); // Llenar el combo con proveedores
+        // Agregar solo los nombres al ComboBox
+        cbProveedor = new JComboBox<>(nombresProveedores);
         add(cbProveedor);
 
         add(new JLabel("Categoría:"));
@@ -51,12 +57,7 @@ public class VistaProducto extends JDialog {
         add(txtCategoria);
 
         JButton btnGuardar = new JButton("Guardar");
-        btnGuardar.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                guardarProducto();
-            }
-        });
+        btnGuardar.addActionListener((ActionEvent e) -> guardarProducto());
         add(btnGuardar);
 
         JButton btnCancelar = new JButton("Cancelar");
@@ -67,9 +68,9 @@ public class VistaProducto extends JDialog {
             txtNombre.setText(producto.getNombre());
             txtPrecio.setText(String.valueOf(producto.getPrecio()));
             txtCantidad.setText(String.valueOf(producto.getCantidad()));
-            txtFechaVencimiento.setText(producto.getFechaVencimiento().toString()); // Suponiendo que el formato es YYYY-MM-DD
-            cbProveedor.setSelectedItem(producto.getProveedor()); // Se selecciona el proveedor correspondiente
-            txtCategoria.setText(producto.getCategoria()); // Se establece la categoría correspondiente
+            txtFechaVencimiento.setText(producto.getFechaVencimiento().toString());
+            cbProveedor.setSelectedItem(producto.getProveedor()); // Seleccionar el proveedor correspondiente
+            txtCategoria.setText(producto.getCategoria());
         }
 
         setSize(400, 300);
@@ -81,8 +82,8 @@ public class VistaProducto extends JDialog {
         double precio = Double.parseDouble(txtPrecio.getText());
         int cantidad = Integer.parseInt(txtCantidad.getText());
         LocalDate fechaVencimiento = LocalDate.parse(txtFechaVencimiento.getText(), DateTimeFormatter.ISO_LOCAL_DATE);
-        Proveedor proveedor = (Proveedor) cbProveedor.getSelectedItem(); // Cambiado a Proveedor
-        String categoria = txtCategoria.getText(); // Obtener categoría desde el campo de texto
+        String proveedorNombre = (String) cbProveedor.getSelectedItem(); // Obtener proveedor seleccionado
+        String categoria = txtCategoria.getText();
 
         if (producto == null) {
             producto = new Producto();
@@ -92,7 +93,7 @@ public class VistaProducto extends JDialog {
         producto.setPrecio(precio);
         producto.setCantidad(cantidad);
         producto.setFechaVencimiento(fechaVencimiento);
-        producto.setProveedor(proveedor.getNombre());
+        producto.setProveedor(proveedorNombre); // Almacenar el nombre del proveedor
         producto.setCategoria(categoria);
 
         dispose();

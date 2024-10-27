@@ -1,5 +1,8 @@
 package Repositorio;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,6 +35,38 @@ public class ProveedorRepositorio implements IProveedorRepositorio {
                 proveedores.set(i, proveedor);
                 return;
             }
+        }
+    }
+
+    public void cargarProveedoresDesdeCSV(String rutaArchivo) {
+        try (BufferedReader br = new BufferedReader(new FileReader(rutaArchivo))) {
+            String linea;
+            boolean esPrimeraLinea = true;
+
+            while ((linea = br.readLine()) != null) {
+                if (esPrimeraLinea) {
+                    esPrimeraLinea = false; // Omitir la primera línea
+                    continue;
+                }
+
+                String[] datos = linea.split(",");
+                if (datos.length >= 4) {
+                    int id = Integer.parseInt(datos[0]);
+                    String nombre = datos[1];
+                    String direccion = datos[2];
+                    String telefono = datos[3];
+
+                    Proveedor proveedor = new Proveedor();
+                    proveedor.setId(id);
+                    proveedor.setNombre(nombre);
+                    proveedor.setDireccion(direccion);
+                    proveedor.setTelefono(telefono);
+
+                    proveedores.add(proveedor);
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
