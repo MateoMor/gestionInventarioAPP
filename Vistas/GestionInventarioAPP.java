@@ -4,6 +4,7 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableRowSorter;
 import Modelo.Producto;
 import Modelo.Proveedor;
+import Modelo.Usuario;
 
 import javax.swing.*;
 import java.awt.*;

@@ -1,12 +1,12 @@
 import javax.swing.SwingUtilities;
 
-import Vistas.GestionInventarioAPP;
+import Vistas.LoginFrame;
 
 public class APP {
-    public static void main (String[] args) throws Exception {
-            SwingUtilities.invokeLater(() -> {
-                GestionInventarioAPP app = new GestionInventarioAPP();
-                app.setVisible(true);
-            });
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(() -> {
+            LoginFrame loginFrameInstance = new LoginFrame();
+            loginFrameInstance.setVisible(true);
+        });
     }
 }
