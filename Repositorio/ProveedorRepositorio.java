@@ -15,7 +15,19 @@ public class ProveedorRepositorio implements IProveedorRepositorio {
         proveedores = new ArrayList<>();
     }
 
+    // Agrega este método
+    public int obtenerSiguienteId() {
+        return proveedores.stream()
+                .mapToInt(Proveedor::getId)
+                .max()
+                .orElse(0) + 1; // Si no hay proveedores, devuelve 1
+    }
+
+    @Override
     public void agregarProveedor(Proveedor proveedor) {
+        if (proveedor.getId() == 0) { // Si no tiene ID asignada
+            proveedor.setId(obtenerSiguienteId());
+        }
         proveedores.add(proveedor);
     }
 

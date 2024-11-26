@@ -34,6 +34,7 @@ public class VistaProveedor extends JDialog {
                 this.proveedor = new Proveedor(); // Asignar a la variable de instancia
             }
             // Asignar los valores de los campos de texto al proveedor
+            /* this.proveedor.setId(); */
             this.proveedor.setNombre(txtNombre.getText());
             this.proveedor.setDireccion(txtDireccion.getText());
             this.proveedor.setTelefono(txtTelefono.getText());

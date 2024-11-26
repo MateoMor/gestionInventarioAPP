@@ -12,38 +12,35 @@ public class ProveedorServicio implements IProveedorServicio {
         this.repository = repository;
     }
 
+    @Override
     public void agregarProveedor(Proveedor proveedor) {
+        if (proveedor.getId() == 0) { // Si no tiene ID, asignarla desde el repositorio
+            proveedor.setId(repository.obtenerSiguienteId());
+        }
         repository.agregarProveedor(proveedor);
     }
 
+    @Override
     public void eliminarProveedor(Proveedor proveedor) {
         repository.eliminarProveedor(proveedor);
     }
 
+    @Override
     public void eliminarProveedorPorId(int id) {
-        List<Proveedor> proveedores = repository.obtenerTodos();
-        for (Proveedor p : proveedores) {
-            if (p.getId() == id) {
-                repository.eliminarProveedor(p);
-                break;
-            }
-        }
+        repository.eliminarProveedorPorId(id);
     }
 
+    @Override
     public void actualizarProveedor(int id, Proveedor proveedor) {
-        List<Proveedor> proveedores = repository.obtenerTodos();
-        for (int i = 0; i < proveedores.size(); i++) {
-            if (proveedores.get(i).getId() == id) {
-                repository.actualizarProveedor(i, proveedor);
-                break;
-            }
-        }
+        repository.actualizarProveedor(id, proveedor);
     }
 
+    @Override
     public void cargarProveedoresDesdeCSV(String rutaArchivo) {
         repository.cargarProveedoresDesdeCSV(rutaArchivo);
     }
 
+    @Override
     public List<Proveedor> obtenerTodos() {
         return repository.obtenerTodos();
     }
