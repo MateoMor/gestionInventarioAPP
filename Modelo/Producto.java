@@ -12,6 +12,8 @@ public class Producto {
     private LocalDate fechaVencimiento;
     private int proveedorId;
     private String categoria;
+    private int cantidadMaxima; // Nueva cantidad máxima
+    private int cantidadMinima; // Nueva cantidad mínima
 
     // Constructor
     public Producto() {
@@ -86,7 +88,6 @@ public class Producto {
         return fechaVencimiento != null;
     }
 
-    // Getter y Setter para categoria
     public String getCategoria() {
         return categoria;
     }
@@ -97,5 +98,38 @@ public class Producto {
 
     public double calcularValorInventario() {
         return this.cantidad * this.precio;
+    }
+
+    // Getters y Setters para cantidad máxima y mínima
+    public int getCantidadMaxima() {
+        return cantidadMaxima;
+    }
+
+    public void setCantidadMaxima(int cantidadMaxima) {
+        this.cantidadMaxima = cantidadMaxima;
+    }
+
+    public int getCantidadMinima() {
+        return cantidadMinima;
+    }
+
+    public void setCantidadMinima(int cantidadMinima) {
+        this.cantidadMinima = cantidadMinima;
+    }
+
+    /**
+     * Verifica si la cantidad actual está por debajo de la cantidad mínima.
+     * @return true si está por debajo, false si no.
+     */
+    public boolean estaPorDebajoDeMinima() {
+        return cantidad < cantidadMinima;
+    }
+
+    /**
+     * Verifica si la cantidad actual excede la cantidad máxima.
+     * @return true si excede, false si no.
+     */
+    public boolean excedeMaxima() {
+        return cantidad > cantidadMaxima;
     }
 }
