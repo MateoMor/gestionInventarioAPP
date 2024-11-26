@@ -17,7 +17,7 @@ public class LoginFrame extends JFrame {
         usuarioServicio = new UsuarioServicio();
 
         setTitle("Login");
-        setSize(500, 250);
+        setSize(500, 300);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
 
@@ -25,22 +25,24 @@ public class LoginFrame extends JFrame {
         JLabel labelCorreo = new JLabel("Correo:");
         JTextField campoCorreo = new JTextField(15);
         JLabel labelPassword = new JLabel("Contraseña:");
-        JTextField campoPassword = new JTextField(15);
+        JPasswordField campoPassword = new JPasswordField(15);
         JButton botonIngresar = new JButton("Ingresar");
+        JButton botonCrearUsuario = new JButton("Crear Usuario");
 
         // Panel de diseño
         JPanel panel = new JPanel();
-        panel.setLayout(new GridLayout(6, 3));
+        panel.setLayout(new GridLayout(7, 3, 5, 5));
 
-        
-        panel.setBorder(new EmptyBorder(10, 10, 10, 10)); 
+        panel.setBorder(new EmptyBorder(10, 10, 10, 10));
 
         panel.add(labelCorreo);
         panel.add(campoCorreo);
         panel.add(labelPassword);
         panel.add(campoPassword);
-        panel.add(new JLabel()); 
+        panel.add(new JLabel()); // Espacio vacío
         panel.add(botonIngresar);
+        panel.add(new JLabel()); // Espacio vacío
+        panel.add(botonCrearUsuario);
 
         add(panel);
 
@@ -49,20 +51,36 @@ public class LoginFrame extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 String correo = campoCorreo.getText();
-                String password = campoPassword.getText();
+                String password = new String(campoPassword.getPassword());
 
-                if (usuarioServicio.validarUsuario(correo, password)) {  
+                if (usuarioServicio.validarUsuario(correo, password)) {
                     Usuario usuario = UsuarioRepositorio.obtenerUsuarioPorCorreo(correo);
                     JOptionPane.showMessageDialog(null, "Bienvenido " + usuario.getNombre());
 
                     // Mostrar la interfaz principal
                     GestionInventarioAPP mainFrame = new GestionInventarioAPP(usuario);
                     mainFrame.setVisible(true);
-                    dispose();  // Cerrar la ventana de login
+                    dispose(); // Cerrar la ventana de login
                 } else {
                     JOptionPane.showMessageDialog(null, "Usuario o contraseña incorrectos", "Error", JOptionPane.ERROR_MESSAGE);
                 }
             }
+        });
+
+        // ActionListener para el botón "Crear Usuario"
+        botonCrearUsuario.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                CrearUsuarioFrame crearUsuarioFrame = new CrearUsuarioFrame();
+                crearUsuarioFrame.setVisible(true);
+            }
+        });
+    }
+
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(() -> {
+            LoginFrame loginFrame = new LoginFrame();
+            loginFrame.setVisible(true);
         });
     }
 }
