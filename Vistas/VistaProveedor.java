@@ -28,7 +28,7 @@ public class VistaProveedor extends JDialog {
         JPanel panelBotones = new JPanel();
 
         JButton btnGuardar = new JButton("Guardar");
-        btnGuardar.addActionListener(e -> {
+        btnGuardar.addActionListener(_ -> {
             // Comprobar si el proveedor es nulo y crear uno nuevo
             if (this.proveedor == null) {
                 this.proveedor = new Proveedor(); // Asignar a la variable de instancia
@@ -42,7 +42,7 @@ public class VistaProveedor extends JDialog {
         });
 
         JButton btnCancelar = new JButton("Cancelar");
-        btnCancelar.addActionListener(e -> dispose());
+        btnCancelar.addActionListener(_ -> dispose());
 
         panelBotones.add(btnGuardar);
         panelBotones.add(btnCancelar);

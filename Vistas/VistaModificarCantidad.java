@@ -46,9 +46,9 @@ public class VistaModificarCantidad extends JDialog {
         add(btnDisminuir);
         add(btnAplicar);
 
-        btnAumentar.addActionListener(e -> modificarCantidad(true));
-        btnDisminuir.addActionListener(e -> modificarCantidad(false));
-        btnAplicar.addActionListener(e -> aplicarCambio());
+        btnAumentar.addActionListener(_ -> modificarCantidad(true));
+        btnDisminuir.addActionListener(_ -> modificarCantidad(false));
+        btnAplicar.addActionListener(_ -> aplicarCambio());
 
         setLocationRelativeTo(owner);
     }

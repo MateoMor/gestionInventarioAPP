@@ -56,10 +56,10 @@ public class VistaTablaDeProveedores extends JFrame {
         add(new JScrollPane(tablaDeProveedores), BorderLayout.CENTER);
         add(panelBotones, BorderLayout.SOUTH);
     
-        btnAgregar.addActionListener(e -> agregarProveedor());
-        btnEditar.addActionListener(e -> editarProveedor());
-        btnEliminar.addActionListener(e -> eliminarProveedor());
-        btnExportarCSV.addActionListener(e -> exportarCSV());
+        btnAgregar.addActionListener(_ -> agregarProveedor());
+        btnEditar.addActionListener(_ -> editarProveedor());
+        btnEliminar.addActionListener(_ -> eliminarProveedor());
+        btnExportarCSV.addActionListener(_ -> exportarCSV());
     
         // Cargar proveedores desde el archivo CSV
         cargarProveedoresDesdeCSV();

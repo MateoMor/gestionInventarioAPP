@@ -57,11 +57,11 @@ public class VistaProducto extends JDialog {
         add(txtCategoria);
 
         JButton btnGuardar = new JButton("Guardar");
-        btnGuardar.addActionListener((ActionEvent e) -> guardarProducto());
+        btnGuardar.addActionListener((ActionEvent _) -> guardarProducto());
         add(btnGuardar);
 
         JButton btnCancelar = new JButton("Cancelar");
-        btnCancelar.addActionListener(e -> dispose());
+        btnCancelar.addActionListener(_ -> dispose());
         add(btnCancelar);
 
         if (producto != null) {

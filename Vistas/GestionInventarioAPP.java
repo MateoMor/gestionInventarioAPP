@@ -79,12 +79,12 @@ public class GestionInventarioAPP extends JFrame {
         // Configuración de permisos según el rol
         configurarPermisos(usuarioLogueado, btnAgregar, btnEditar, btnEliminar, btnProveedores, btnLog, btnModificarCantidad);
     
-        btnProveedores.addActionListener(e -> mostrarProveedores());
-        btnAgregar.addActionListener(e -> agregarProducto());
-        btnEditar.addActionListener(e -> editarProducto());
-        btnEliminar.addActionListener(e -> eliminarProducto());
-        btnLog.addActionListener(e -> mostrarLog());
-        btnModificarCantidad.addActionListener(e -> modificarCantidadProducto());
+        btnProveedores.addActionListener(_ -> mostrarProveedores());
+        btnAgregar.addActionListener(_ -> agregarProducto());
+        btnEditar.addActionListener(_ -> editarProducto());
+        btnEliminar.addActionListener(_ -> eliminarProducto());
+        btnLog.addActionListener(_ -> mostrarLog());
+        btnModificarCantidad.addActionListener(_ -> modificarCantidadProducto());
     }
 
     private void configurarPermisos(Usuario usuario, JButton btnAgregar, JButton btnEditar, JButton btnEliminar, 
