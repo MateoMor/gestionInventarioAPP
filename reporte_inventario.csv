@@ -1,14 +1,15 @@
 Producto,Saldo,CostoPromedio,CostoTotal
-Leche UHT,0,0.00,0.00
-Carne de Res,0,0.00,0.00
-Camiseta Deportiva,0,0.00,0.00
-Tablet Android 10",0,0.00,0.00
-Computador Portátil,0,0.00,0.00
-Micrófono Profesional,0,0.00,0.00
-Smartphone 5G,0,0.00,0.00
-Zapatillas Deportivas,0,0.00,0.00
-Cereal Integral,0,0.00,0.00
-Jugo Natural de Naranja,0,0.00,0.00
-Cámara Digital,0,0.00,0.00
-Bicicleta de Montaña,0,0.00,0.00
-as,0,0.00,0.00
+Leche UHT,100,1.50,150.00
+Carne de Res,50,3.25,162.50
+Camiseta Deportiva,30,25.00,750.00
+Tablet Android 10",20,250.00,5000.00
+Computador Portátil,10,800.00,8000.00
+Micrófono Profesional,15,120.00,1800.00
+Smartphone 5G,25,550.00,13750.00
+Zapatillas Deportivas,40,60.00,2400.00
+Cereal Integral,200,4.00,800.00
+Jugo Natural de Naranja,150,2.75,412.50
+Cámara Digital,18,350.00,6300.00
+Bicicleta de Montaña,12,500.00,6000.00
+as,5,15.00,75.00
+123,123,123.00,15129.00

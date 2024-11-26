@@ -129,12 +129,12 @@ public class GestionInventarioAPP extends JFrame {
     private void agregarProducto() {
         List<Producto> productosExistentes = productoServicio.obtenerTodos();
         int maxId = productosExistentes.stream().mapToInt(Producto::getId).max().orElse(0);
-
+    
         VistaProducto dialog = new VistaProducto(this, "Agregar Producto", null, obtenerProveedores());
         dialog.setVisible(true);
-
+    
         Producto producto = dialog.getProducto();
-
+    
         if (producto != null) {
             producto.setId(maxId + 1);
             productoServicio.agregarProducto(producto);
@@ -175,18 +175,21 @@ public class GestionInventarioAPP extends JFrame {
     }
 
     private void actualizarTabla() {
-        modeloDeTabla.setRowCount(0);
+        modeloDeTabla.setRowCount(0);  // Limpiar tabla antes de actualizarla
         List<Producto> productos = productoServicio.obtenerTodos();
         for (Producto p : productos) {
             modeloDeTabla.addRow(new Object[]{
                 p.getId(),
                 p.getNombre(),
+                p.getPrecio(),  // Asegúrate de agregar precio
+                p.getCantidad(),  // Asegúrate de agregar cantidad
                 p.getFechaVencimiento(),
                 p.getProveedor() != null ? p.getProveedor() : "",
                 p.getCategoria()
             });
         }
     }
+    
 
     private void leerCSV() {
         try {
@@ -203,23 +206,30 @@ public class GestionInventarioAPP extends JFrame {
 
     private void exportarCSV() {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter("productos.csv"))) {
-            // Escribir encabezado sin Precio y Cantidad
-            writer.write("ID,Nombre,Fecha De Vencimiento,Proveedor,Categoría\n");
+            // Escribir encabezado con todos los campos
+            writer.write("ID,Nombre,Precio,Cantidad,Fecha De Vencimiento,Proveedor,Categoría\n");
+            
+            // Escribir los productos
             for (Producto p : productoServicio.obtenerTodos()) {
-                writer.write(String.format("%d,%s,%s,%s,%s\n",
+                writer.write(String.format("%d,%s,%.2f,%d,%s,%s,%s\n",
                     p.getId(),
                     p.getNombre(),
-                    p.getFechaVencimiento(),
-                    p.getProveedor() != null ? p.getProveedor() : "",
-                    p.getCategoria()
+                    p.getPrecio(), // Precio
+                    p.getCantidad(), // Cantidad
+                    p.getFechaVencimiento(), // Fecha de vencimiento
+                    p.getProveedor() != null ? p.getProveedor() : "", // Proveedor
+                    p.getCategoria() // Categoría
                 ));
             }
+            
             JOptionPane.showMessageDialog(this, "Archivo CSV exportado correctamente.");
         } catch (IOException e) {
             e.printStackTrace();
             JOptionPane.showMessageDialog(null, "Error al exportar el archivo.");
         }
     }
+    
+    
 
     private void mostrarLog() {
         VistaLog vistaLog = new VistaLog();

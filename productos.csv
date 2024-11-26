@@ -1,14 +1,15 @@
-ID,Nombre,Fecha De Vencimiento,Proveedor,Categoría
-1,Leche UHT,2025-12-01,Lacteos S.A.,alimento
-2,Carne de Res,2024-11-15,Carnicería El Sabor,alimento
-3,Camiseta Deportiva,2024-08-30,Indumentaria Fashion,indumentaria
-4,Tablet Android 10",2025-05-20,Tecnología Innovadora,tecnologica
-5,Computador Portátil,2025-01-15,Electro Mundo,tecnologica
-6,Micrófono Profesional,2025-03-25,Sonido Perfecto,tecnologica
-7,Smartphone 5G,2025-11-10,Gadgets Globales,tecnologica
-8,Zapatillas Deportivas,2024-07-20,Zapatos Rápidos,indumentaria
-9,Cereal Integral,2024-10-30,Desayunos Saludables,alimento
-10,Jugo Natural de Naranja,2025-04-01,Bebidas Naturales,alimento
-11,Cámara Digital,2025-06-18,Fotografía Pro,tecnologica
-12,Bicicleta de Montaña,2025-09-10,Ciclismo Aventura,indumentaria
-13,as,2024-10-10,Tecnología Innovadora,algo
+ID,Nombre,Precio,Cantidad,Fecha De Vencimiento,Proveedor,Categoría
+1,Leche UHT,1.50,100,2025-12-01,Lacteos S.A.,alimento
+2,Carne de Res,3.25,50,2024-11-15,Carnicería El Sabor,alimento
+3,Camiseta Deportiva,25.00,30,2024-08-30,Indumentaria Fashion,indumentaria
+4,Tablet Android 10",250.00,20,2025-05-20,Tecnología Innovadora,tecnologica
+5,Computador Portátil,800.00,10,2025-01-15,Electro Mundo,tecnologica
+6,Micrófono Profesional,120.00,15,2025-03-25,Sonido Perfecto,tecnologica
+7,Smartphone 5G,550.00,25,2025-11-10,Gadgets Globales,tecnologica
+8,Zapatillas Deportivas,60.00,40,2024-07-20,Zapatos Rápidos,indumentaria
+9,Cereal Integral,4.00,200,2024-10-30,Desayunos Saludables,alimento
+10,Jugo Natural de Naranja,2.75,150,2025-04-01,Bebidas Naturales,alimento
+11,Cámara Digital,350.00,18,2025-06-18,Fotografía Pro,tecnologica
+12,Bicicleta de Montaña,500.00,12,2025-09-10,Ciclismo Aventura,indumentaria
+13,as,15.00,5,2024-10-10,Tecnología Innovadora,algo
+14,123,123.00,123,2024-10-10,Lacteos S.A.,asd
