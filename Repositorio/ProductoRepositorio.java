@@ -32,60 +32,60 @@ public class ProductoRepositorio implements IProductoRepositorio {
         }
     }
 
+    @Override
     public void leerProductosCSV(String path) {
         try (BufferedReader br = new BufferedReader(new FileReader(path))) {
             String line;
-            boolean isFirstLine = true; // Variable para detectar la primera línea
+            boolean isFirstLine = true; // Para saltar el encabezado
     
             while ((line = br.readLine()) != null) {
                 if (isFirstLine) {
-                    isFirstLine = false; // Marca que la primera línea ha sido leída
-                    continue; // Salta a la siguiente iteración (es decir, omite esta línea)
+                    isFirstLine = false; // Saltar la primera línea (encabezado)
+                    continue;
                 }
     
-                String[] values = line.split(COMMA_DELIMITER);
-                if (values.length >= 6) { // Asegúrate de que hay suficientes columnas
+                String[] values = line.split(COMMA_DELIMITER); // Usamos el delimitador de coma para separar las columnas
+                if (values.length >= 5) { // Asegurarse de que haya al menos 5 columnas (ID, Nombre, Fecha, Proveedor, Categoría)
                     Producto producto = new Producto();
     
-                    // Parsear ID como Integer
-                    producto.setId(Integer.parseInt(values[0])); // Asignar el ID desde el CSV
+                    // Parsear ID (solo si es un número)
+                    try {
+                        producto.setId(Integer.parseInt(values[0].trim())); // Asignar el ID desde el CSV
+                    } catch (NumberFormatException e) {
+                        System.err.println("Error de formato en la línea: " + line);
+                        continue; // Si no puede parsear el ID, saltamos esta línea
+                    }
     
                     // Establecer nombre
-                    producto.setNombre(values[1]);
+                    producto.setNombre(values[1].trim());
     
-                    // Parsear precio como Double
-                    producto.setPrecio(Double.parseDouble(values[2]));
-    
-                    // Parsear cantidad como Integer
-                    producto.setCantidad(Integer.parseInt(values[3]));
-    
-                    // Si hay una fecha de vencimiento en la cuarta columna
-                    if (!values[4].isEmpty()) {
-                        LocalDate fechaVencimiento = LocalDate.parse(values[4], DateTimeFormatter.ISO_DATE);
-                        producto.setFechaVencimiento(fechaVencimiento);
+                    // Establecer fecha de vencimiento (si está presente, de lo contrario, nula)
+                    if (!values[2].isEmpty()) {
+                        producto.setFechaVencimiento(LocalDate.parse(values[2].trim(), DateTimeFormatter.ISO_DATE));
                     } else {
-                        producto.setFechaVencimiento(null); // Sin fecha de vencimiento
+                        producto.setFechaVencimiento(null); // Fecha de vencimiento nula si no está presente
                     }
     
-                    // Asignar proveedor (puede estar vacío)
-                    if (!values[5].isEmpty()) {
-                        producto.setProveedor(values[5]); // Asignar el nombre del proveedor desde el CSV
-                    } 
+                    // Asignar proveedor (si está presente)
+                    producto.setProveedor(values[3].trim());
     
-                    // Si hay una categoría en la séptima columna
-                    if (values.length > 6) {
-                        producto.setCategoria(values[6]); // Asumiendo que hay un método setCategoria
-                    }
+                    // Asignar categoría (si está presente)
+                    producto.setCategoria(values.length > 4 ? values[4].trim() : "");
     
-                    productos.add(producto); // Agregar el producto a la lista
+                    // Añadir el producto a la lista
+                    productos.add(producto);
+                } else {
+                    System.err.println("Error de formato en línea: " + line); // Si la línea no tiene suficientes columnas
                 }
             }
         } catch (IOException e) {
             e.printStackTrace(); // Manejo de errores
-        } catch (NumberFormatException e) {
-            e.printStackTrace(); // Manejo de errores por formato de número
+        } catch (Exception e) {
+            e.printStackTrace(); // Otros errores
         }
     }
+    
+
     
     
 
