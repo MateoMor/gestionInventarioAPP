@@ -28,28 +28,28 @@ public class GestionInventarioAPP extends JFrame {
     private ProveedorServicio proveedorServicio;
     private JLabel lblValorInventario;
 
-    public GestionInventarioAPP() {
+    public GestionInventarioAPP(Usuario usuarioLogueado) {
         IProductoRepositorio productoRepository = new ProductoRepositorio();
         IProveedorRepositorio proveedorRepository = new ProveedorRepositorio();
         productoServicio = new ProductoServicio(productoRepository);
         proveedorServicio = new ProveedorServicio(proveedorRepository);
-
+    
         // Cargar proveedores desde el archivo CSV al abrir la aplicación
         proveedorServicio.cargarProveedoresDesdeCSV("proveedores.csv");
-
+    
         // Configuración de la tabla para mostrar productos
         modeloDeTabla = new DefaultTableModel(new String[]{"ID", "Nombre", "Precio", "Cantidad", "Fecha de Vencimiento", "Proveedor", "Categoría"}, 0);
         tablaDeProductos = new JTable(modeloDeTabla);
-
+    
         // Configuración de ordenamiento
         TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<>(modeloDeTabla);
         tablaDeProductos.setRowSorter(sorter);
-
-        setTitle("Gestión de Inventario");
+    
+        setTitle("Gestión de Inventario - Usuario: " + usuarioLogueado.getRol());
         setLayout(new BorderLayout());
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setSize(750, 400);
-
+    
         JPanel panelBotones = new JPanel();
         JButton btnProveedores = new JButton("Proveedores");
         JButton btnAgregar = new JButton("Agregar");
@@ -57,25 +57,28 @@ public class GestionInventarioAPP extends JFrame {
         JButton btnEliminar = new JButton("Eliminar");
         JButton btnLog = new JButton("Log");
         JButton btnModificarCantidad = new JButton("Modificar Cantidad");
-
+    
         JPanel panelInventario = new JPanel();
         lblValorInventario = new JLabel("Valor de Inventario: $0.0");
         panelInventario.add(lblValorInventario);
         add(panelInventario, BorderLayout.NORTH);
-
+    
         leerCSV();
         actualizarValor();
-
+    
         panelBotones.add(btnModificarCantidad);
         panelBotones.add(btnAgregar);
         panelBotones.add(btnEditar);
         panelBotones.add(btnEliminar);
         panelBotones.add(btnProveedores);
         panelBotones.add(btnLog);
-
+    
         add(new JScrollPane(tablaDeProductos), BorderLayout.CENTER);
         add(panelBotones, BorderLayout.SOUTH);
-
+    
+        // Configuración de permisos según el rol
+        configurarPermisos(usuarioLogueado, btnAgregar, btnEditar, btnEliminar, btnProveedores, btnLog, btnModificarCantidad);
+    
         btnProveedores.addActionListener(e -> mostrarProveedores());
         btnAgregar.addActionListener(e -> agregarProducto());
         btnEditar.addActionListener(e -> editarProducto());
@@ -83,6 +86,35 @@ public class GestionInventarioAPP extends JFrame {
         btnLog.addActionListener(e -> mostrarLog());
         btnModificarCantidad.addActionListener(e -> modificarCantidadProducto());
     }
+
+    private void configurarPermisos(Usuario usuario, JButton btnAgregar, JButton btnEditar, JButton btnEliminar, 
+                                 JButton btnProveedores, JButton btnLog, JButton btnModificarCantidad) {
+    String rol = usuario.getRol();
+
+    switch (rol) {
+        case "Administrador":
+            // El administrador tiene acceso completo, no se necesita hacer nada
+            break;
+        case "Auxiliar":
+            // Deshabilitar botones según los permisos para auxiliares
+            btnAgregar.setEnabled(false);
+            btnEditar.setEnabled(false);
+            btnEliminar.setEnabled(false);
+            btnProveedores.setEnabled(false);
+            btnLog.setEnabled(true);
+            btnModificarCantidad.setEnabled(true);
+            break;
+        default:
+            // Si el rol no es reconocido, deshabilitar todo
+            btnAgregar.setEnabled(false);
+            btnEditar.setEnabled(false);
+            btnEliminar.setEnabled(false);
+            btnProveedores.setEnabled(false);
+            btnLog.setEnabled(false);
+            btnModificarCantidad.setEnabled(false);
+            JOptionPane.showMessageDialog(this, "Rol no reconocido. Contacte al administrador.");
+    }
+}
 
     private void mostrarProveedores() {
         VistaTablaDeProveedores vistaProveedores = new VistaTablaDeProveedores();

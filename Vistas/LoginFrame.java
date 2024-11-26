@@ -56,7 +56,7 @@ public class LoginFrame extends JFrame {
                     JOptionPane.showMessageDialog(null, "Bienvenido " + usuario.getNombre());
 
                     // Mostrar la interfaz principal
-                    GestionInventarioAPP mainFrame = new GestionInventarioAPP();
+                    GestionInventarioAPP mainFrame = new GestionInventarioAPP(usuario);
                     mainFrame.setVisible(true);
                     dispose();  // Cerrar la ventana de login
                 } else {

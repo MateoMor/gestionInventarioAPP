@@ -1,6 +1,5 @@
 package Repositorio;
 
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -67,5 +66,33 @@ public class UsuarioRepositorio {
             }
         }
         System.out.println("Usuario no encontrado.");
+    }
+
+    // Método para validar si un usuario tiene permisos según su rol
+    public static boolean tienePermiso(String correo, String accion) {
+        Usuario usuario = obtenerUsuarioPorCorreo(correo);
+        if (usuario == null) {
+            System.out.println("Usuario no encontrado.");
+            return false;
+        }
+
+        // Validación de permisos basada en el rol
+        String rol = usuario.getRol();
+        switch (rol.toLowerCase()) {
+            case "administrador":
+                // El administrador tiene permisos para todas las acciones
+                return true;
+            case "auxiliar":
+                // El auxiliar tiene permisos restringidos
+                if (accion.equalsIgnoreCase("ver") || accion.equalsIgnoreCase("modificar")) {
+                    return true;
+                } else {
+                    System.out.println("Permiso denegado para la acción: " + accion);
+                    return false;
+                }
+            default:
+                System.out.println("Rol no reconocido: " + rol);
+                return false;
+        }
     }
 }

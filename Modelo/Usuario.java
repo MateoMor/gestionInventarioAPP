@@ -1,6 +1,5 @@
 package Modelo;
 
-
 public class Usuario {
     // Atributos privados
     private int id;
@@ -13,8 +12,9 @@ public class Usuario {
     private String correo;
     private String password;
     private boolean estadoActivo;
+    private String rol; // Nuevo atributo
 
-    
+    // Constructor por defecto
     public Usuario() {
     }
 
@@ -76,7 +76,6 @@ public class Usuario {
         this.telefono = telefono;
     }
 
-    
     public String getCorreo() {
         return correo;
     }
@@ -92,12 +91,20 @@ public class Usuario {
     public void setPassword(String password) {
         this.password = password;
     }
-    
+
     public boolean isEstadoActivo() {
         return estadoActivo;
     }
 
     public void setEstadoActivo(boolean estadoActivo) {
         this.estadoActivo = estadoActivo;
+    }
+
+    public String getRol() { // Getter del atributo rol
+        return rol;
+    }
+
+    public void setRol(String rol) { // Setter del atributo rol
+        this.rol = rol;
     }
 }

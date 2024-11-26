@@ -5,17 +5,28 @@ import Repositorio.UsuarioRepositorio;
 
 public class UsuarioServicio {
     public UsuarioServicio() {
-        // Este es un usuario de prueba
-        Usuario usuarioPrueba = new Usuario();
-        usuarioPrueba.setId(1);
-        usuarioPrueba.setNombre("Mateo");
-        usuarioPrueba.setApellido("Morales");
-        usuarioPrueba.setCorreo("mateo@example.com");
-        usuarioPrueba.setPassword("123");
-        usuarioPrueba.setEstadoActivo(true);
+        // Este es un usuario de prueba de administrador
+        Usuario usuarioAdmin = new Usuario();
+        usuarioAdmin.setId(1);
+        usuarioAdmin.setNombre("admin");
+        usuarioAdmin.setApellido("admin");
+        usuarioAdmin.setCorreo("admin@example.com");
+        usuarioAdmin.setPassword("123");
+        usuarioAdmin.setEstadoActivo(true);
+        usuarioAdmin.setRol("Administrador");
 
-        // Agregar el usuario al repositorio
-        UsuarioRepositorio.crearUsuario(usuarioPrueba);
+        Usuario usuarioAuxiliar = new Usuario();
+        usuarioAuxiliar.setId(2);
+        usuarioAuxiliar.setNombre("auxiliar");
+        usuarioAuxiliar.setApellido("auxiliar");
+        usuarioAuxiliar.setCorreo("auxiliar@example.com");
+        usuarioAuxiliar.setPassword("123");
+        usuarioAuxiliar.setEstadoActivo(true);
+        usuarioAuxiliar.setRol("Auxiliar");
+
+        // Agregar los usuarios al repositorio
+        UsuarioRepositorio.crearUsuario(usuarioAdmin);
+        UsuarioRepositorio.crearUsuario(usuarioAuxiliar);
     }
 
     // Método para validar usuario
@@ -24,5 +35,18 @@ public class UsuarioServicio {
         return usuario != null && usuario.getPassword().equals(password);
     }
 
-    
+    // Método para validar si un usuario tiene permisos según su rol
+    public boolean usuarioTienePermiso(String correo, String accion) {
+        return UsuarioRepositorio.tienePermiso(correo, accion);
+    }
+
+    // Método para realizar una acción, dependiendo de los permisos
+    public void realizarAccion(String correo, String accion) {
+        if (usuarioTienePermiso(correo, accion)) {
+            System.out.println("El usuario con correo " + correo + " tiene permiso para realizar la acción: " + accion);
+            // Aquí puedes incluir la lógica para realizar la acción
+        } else {
+            System.out.println("El usuario con correo " + correo + " no tiene permiso para realizar la acción: " + accion);
+        }
+    }
 }
