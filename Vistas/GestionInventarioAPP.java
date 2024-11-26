@@ -26,7 +26,6 @@ public class GestionInventarioAPP extends JFrame {
     private DefaultTableModel modeloDeTabla;
     private IProductoServicio productoServicio;
     private ProveedorServicio proveedorServicio;
-    private JLabel lblValorInventario;
 
     public GestionInventarioAPP(Usuario usuarioLogueado) {
         IProductoRepositorio productoRepository = new ProductoRepositorio();
@@ -37,8 +36,8 @@ public class GestionInventarioAPP extends JFrame {
         // Cargar proveedores desde el archivo CSV al abrir la aplicación
         proveedorServicio.cargarProveedoresDesdeCSV("proveedores.csv");
     
-        // Configuración de la tabla para mostrar productos
-        modeloDeTabla = new DefaultTableModel(new String[]{"ID", "Nombre", "Precio", "Cantidad", "Fecha de Vencimiento", "Proveedor", "Categoría"}, 0);
+        // Configuración de la tabla para mostrar productos (sin Precio ni Cantidad)
+        modeloDeTabla = new DefaultTableModel(new String[]{"ID", "Nombre", "Fecha de Vencimiento", "Proveedor", "Categoría"}, 0);
         tablaDeProductos = new JTable(modeloDeTabla);
     
         // Configuración de ordenamiento
@@ -57,27 +56,25 @@ public class GestionInventarioAPP extends JFrame {
         JButton btnEliminar = new JButton("Eliminar");
         JButton btnLog = new JButton("Log");
         JButton btnModificarCantidad = new JButton("Modificar Cantidad");
+        JButton btnGenerarReporte = new JButton("Generar Reporte"); // Botón para reportes
     
-        JPanel panelInventario = new JPanel();
-        lblValorInventario = new JLabel("Valor de Inventario: $0.0");
-        panelInventario.add(lblValorInventario);
-        add(panelInventario, BorderLayout.NORTH);
+        leerCSV(); // Leer datos desde CSV
+        actualizarTabla(); // Actualizar tabla con datos leídos
     
-        leerCSV();
-        actualizarValor();
-    
+        // Agregar botones al panel
         panelBotones.add(btnModificarCantidad);
         panelBotones.add(btnAgregar);
         panelBotones.add(btnEditar);
         panelBotones.add(btnEliminar);
         panelBotones.add(btnProveedores);
         panelBotones.add(btnLog);
+        panelBotones.add(btnGenerarReporte); // Agregar botón de reportes
     
         add(new JScrollPane(tablaDeProductos), BorderLayout.CENTER);
         add(panelBotones, BorderLayout.SOUTH);
     
         // Configuración de permisos según el rol
-        configurarPermisos(usuarioLogueado, btnAgregar, btnEditar, btnEliminar, btnProveedores, btnLog, btnModificarCantidad);
+        configurarPermisos(usuarioLogueado, btnAgregar, btnEditar, btnEliminar, btnProveedores, btnLog, btnModificarCantidad, btnGenerarReporte);
     
         btnProveedores.addActionListener(_ -> mostrarProveedores());
         btnAgregar.addActionListener(_ -> agregarProducto());
@@ -85,36 +82,44 @@ public class GestionInventarioAPP extends JFrame {
         btnEliminar.addActionListener(_ -> eliminarProducto());
         btnLog.addActionListener(_ -> mostrarLog());
         btnModificarCantidad.addActionListener(_ -> modificarCantidadProducto());
+        btnGenerarReporte.addActionListener(_ -> mostrarVistaGenerarReporte()); // Acción del botón
     }
-
+    
     private void configurarPermisos(Usuario usuario, JButton btnAgregar, JButton btnEditar, JButton btnEliminar, 
-                                 JButton btnProveedores, JButton btnLog, JButton btnModificarCantidad) {
-    String rol = usuario.getRol();
-
-    switch (rol) {
-        case "Administrador":
-            // El administrador tiene acceso completo, no se necesita hacer nada
-            break;
-        case "Auxiliar":
-            // Deshabilitar botones según los permisos para auxiliares
-            btnAgregar.setEnabled(false);
-            btnEditar.setEnabled(false);
-            btnEliminar.setEnabled(false);
-            btnProveedores.setEnabled(false);
-            btnLog.setEnabled(true);
-            btnModificarCantidad.setEnabled(true);
-            break;
-        default:
-            // Si el rol no es reconocido, deshabilitar todo
-            btnAgregar.setEnabled(false);
-            btnEditar.setEnabled(false);
-            btnEliminar.setEnabled(false);
-            btnProveedores.setEnabled(false);
-            btnLog.setEnabled(false);
-            btnModificarCantidad.setEnabled(false);
-            JOptionPane.showMessageDialog(this, "Rol no reconocido. Contacte al administrador.");
+                                     JButton btnProveedores, JButton btnLog, JButton btnModificarCantidad, JButton btnGenerarReporte) {
+        String rol = usuario.getRol();
+    
+        switch (rol) {
+            case "Administrador":
+                // El administrador tiene acceso completo, no se necesita hacer nada
+                break;
+            case "Auxiliar":
+                // Deshabilitar botones según los permisos para auxiliares
+                btnAgregar.setEnabled(false);
+                btnEditar.setEnabled(false);
+                btnEliminar.setEnabled(false);
+                btnProveedores.setEnabled(false);
+                btnLog.setEnabled(true);
+                btnModificarCantidad.setEnabled(true);
+                btnGenerarReporte.setEnabled(true); // Los auxiliares pueden generar reportes
+                break;
+            default:
+                // Si el rol no es reconocido, deshabilitar todo
+                btnAgregar.setEnabled(false);
+                btnEditar.setEnabled(false);
+                btnEliminar.setEnabled(false);
+                btnProveedores.setEnabled(false);
+                btnLog.setEnabled(false);
+                btnModificarCantidad.setEnabled(false);
+                btnGenerarReporte.setEnabled(false);
+                JOptionPane.showMessageDialog(this, "Rol no reconocido. Contacte al administrador.");
+        }
     }
-}
+
+    private void mostrarVistaGenerarReporte() {
+        VistaGenerarReporte vistaReporte = new VistaGenerarReporte(productoServicio);
+        vistaReporte.setVisible(true);
+    }
 
     private void mostrarProveedores() {
         VistaTablaDeProveedores vistaProveedores = new VistaTablaDeProveedores();
@@ -169,26 +174,6 @@ public class GestionInventarioAPP extends JFrame {
         }
     }
 
-    private void exportarCSV() {
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter("productos.csv"))) {
-            writer.write("ID,Nombre,Precio,Cantidad,Fecha De Vencimiento,Proveedor,Categoría\n");
-            for (Producto p : productoServicio.obtenerTodos()) {
-                writer.write(String.format("%d,%s,%.2f,%d,%s,%s,%s\n",
-                    p.getId(),
-                    p.getNombre(),
-                    p.getPrecio(),
-                    p.getCantidad(),
-                    p.getFechaVencimiento(),
-                    p.getProveedor() != null ? p.getProveedor() : "",
-                    p.getCategoria()
-                ));
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-            JOptionPane.showMessageDialog(null, "Error al exportar el archivo.");
-        }
-    }
-
     private void actualizarTabla() {
         modeloDeTabla.setRowCount(0);
         List<Producto> productos = productoServicio.obtenerTodos();
@@ -196,25 +181,16 @@ public class GestionInventarioAPP extends JFrame {
             modeloDeTabla.addRow(new Object[]{
                 p.getId(),
                 p.getNombre(),
-                p.getPrecio(),
-                p.getCantidad(),
                 p.getFechaVencimiento(),
                 p.getProveedor() != null ? p.getProveedor() : "",
                 p.getCategoria()
             });
         }
-        actualizarValor();
-    }
-
-    private void actualizarValor() {
-        double valorInv = productoServicio.obtenerTodos().stream().mapToDouble(Producto::calcularValorInventario).sum();
-        lblValorInventario.setText("Valor de Inventario: $" + valorInv);
     }
 
     private void leerCSV() {
         try {
             productoServicio.leerProductosCSV("productos.csv");
-            actualizarTabla();
         } catch (IOException e) {
             e.printStackTrace();
             JOptionPane.showMessageDialog(null, "Error al leer el archivo.");
@@ -223,6 +199,26 @@ public class GestionInventarioAPP extends JFrame {
 
     private void actualizarCSV() {
         exportarCSV();
+    }
+
+    private void exportarCSV() {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter("productos.csv"))) {
+            // Escribir encabezado sin Precio y Cantidad
+            writer.write("ID,Nombre,Fecha De Vencimiento,Proveedor,Categoría\n");
+            for (Producto p : productoServicio.obtenerTodos()) {
+                writer.write(String.format("%d,%s,%s,%s,%s\n",
+                    p.getId(),
+                    p.getNombre(),
+                    p.getFechaVencimiento(),
+                    p.getProveedor() != null ? p.getProveedor() : "",
+                    p.getCategoria()
+                ));
+            }
+            JOptionPane.showMessageDialog(this, "Archivo CSV exportado correctamente.");
+        } catch (IOException e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Error al exportar el archivo.");
+        }
     }
 
     private void mostrarLog() {

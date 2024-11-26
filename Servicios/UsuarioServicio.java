@@ -24,9 +24,19 @@ public class UsuarioServicio {
         usuarioAuxiliar.setEstadoActivo(true);
         usuarioAuxiliar.setRol("Auxiliar");
 
+        Usuario usuarioRapido = new Usuario();
+        usuarioRapido.setId(3);
+        usuarioRapido.setNombre("a");
+        usuarioRapido.setApellido("a");
+        usuarioRapido.setCorreo("a");
+        usuarioRapido.setPassword("a");
+        usuarioRapido.setEstadoActivo(true);
+        usuarioRapido.setRol("Administrador");
+
         // Agregar los usuarios al repositorio
         UsuarioRepositorio.crearUsuario(usuarioAdmin);
         UsuarioRepositorio.crearUsuario(usuarioAuxiliar);
+        UsuarioRepositorio.crearUsuario(usuarioRapido);
     }
 
     // Método para validar usuario
