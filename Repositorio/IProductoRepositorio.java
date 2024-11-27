@@ -8,5 +8,6 @@ public interface IProductoRepositorio {
   void eliminarProducto(Producto producto);
   void actualizarProducto(int index, Producto producto);
   void leerProductosCSV(String path);
+  Producto obtenerProductoPorId(int id);
   List<Producto> obtenerTodos();
 }

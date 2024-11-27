@@ -45,10 +45,8 @@ public class ProductoRepositorio implements IProductoRepositorio {
                     continue;
                 }
 
-                String[] values = line.split(COMMA_DELIMITER); // Usamos el delimitador de coma para separar las
-                                                               // columnas
-                if (values.length >= 5) { // Asegurarse de que haya al menos 5 columnas (ID, Nombre, Fecha, Proveedor,
-                                          // Categoría)
+                String[] values = line.split(COMMA_DELIMITER); // Usamos el delimitador de coma para separar las columnas
+                if (values.length >= 5) { // Asegurarse de que haya al menos 5 columnas (ID, Nombre, Fecha, Proveedor, Categoría)
                     Producto producto = new Producto();
 
                     // Parsear ID (solo si es un número)
@@ -78,8 +76,7 @@ public class ProductoRepositorio implements IProductoRepositorio {
                     // Añadir el producto a la lista
                     productos.add(producto);
                 } else {
-                    System.err.println("Error de formato en línea: " + line); // Si la línea no tiene suficientes
-                                                                              // columnas
+                    System.err.println("Error de formato en línea: " + line); // Si la línea no tiene suficientes columnas
                 }
             }
         } catch (IOException e) {
@@ -97,5 +94,19 @@ public class ProductoRepositorio implements IProductoRepositorio {
 
     public List<Producto> obtenerTodos() {
         return productos;
+    }
+
+    /**
+     * Busca y devuelve un producto por su ID.
+     * @param id El ID del producto que se desea buscar.
+     * @return El producto con el ID especificado, o null si no se encuentra.
+     */
+    public Producto obtenerProductoPorId(int id) {
+        for (Producto producto : productos) {
+            if (producto.getId() == id) {
+                return producto;
+            }
+        }
+        return null; // Retorna null si no encuentra el producto
     }
 }

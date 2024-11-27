@@ -9,5 +9,5 @@ public interface IPedidoServicio {
     List<Pedido> obtenerTodos();
     Pedido obtenerPedidoPorId(int id);
     void actualizarPedido(Pedido pedido);
-    void recibirPedido(Pedido pedido);
+    List<String> recibirTodosLosPedidos();
 }

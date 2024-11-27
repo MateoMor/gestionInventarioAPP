@@ -32,23 +32,24 @@ public class GestionInventarioAPP extends JFrame {
         IProveedorRepositorio proveedorRepository = new ProveedorRepositorio();
         productoServicio = new ProductoServicio(productoRepository);
         proveedorServicio = new ProveedorServicio(proveedorRepository);
-    
+
         // Cargar proveedores desde el archivo CSV al abrir la aplicación
         proveedorServicio.cargarProveedoresDesdeCSV("proveedores.csv");
-    
+
         // Configuración de la tabla para mostrar productos (sin Precio ni Cantidad)
-        modeloDeTabla = new DefaultTableModel(new String[]{"ID", "Nombre", "Fecha de Vencimiento", "Proveedor", "Categoría"}, 0);
+        modeloDeTabla = new DefaultTableModel(
+                new String[] { "ID", "Nombre", "Fecha de Vencimiento", "Proveedor", "Categoría" }, 0);
         tablaDeProductos = new JTable(modeloDeTabla);
-    
+
         // Configuración de ordenamiento
         TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<>(modeloDeTabla);
         tablaDeProductos.setRowSorter(sorter);
-    
+
         setTitle("Gestión de Inventario - Usuario: " + usuarioLogueado.getRol());
         setLayout(new BorderLayout());
         setDefaultCloseOperation(EXIT_ON_CLOSE);
-        setSize(750, 400);
-    
+        setSize(1050, 400);
+
         JPanel panelBotones = new JPanel();
         JButton btnProveedores = new JButton("Proveedores");
         JButton btnAgregar = new JButton("Agregar");
@@ -57,10 +58,12 @@ public class GestionInventarioAPP extends JFrame {
         JButton btnLog = new JButton("Log");
         JButton btnModificarCantidad = new JButton("Modificar Cantidad");
         JButton btnGenerarReporte = new JButton("Generar Reporte"); // Botón para reportes
-    
+        JButton btnVerificarStock = new JButton("Verificar Stock Bajo");
+        JButton btnRecibirPedido = new JButton("Recibir Pedido");
+
         leerCSV(); // Leer datos desde CSV
         actualizarTabla(); // Actualizar tabla con datos leídos
-    
+
         // Agregar botones al panel
         panelBotones.add(btnModificarCantidad);
         panelBotones.add(btnAgregar);
@@ -69,13 +72,16 @@ public class GestionInventarioAPP extends JFrame {
         panelBotones.add(btnProveedores);
         panelBotones.add(btnLog);
         panelBotones.add(btnGenerarReporte); // Agregar botón de reportes
-    
+        panelBotones.add(btnVerificarStock);
+        panelBotones.add(btnRecibirPedido);
+
         add(new JScrollPane(tablaDeProductos), BorderLayout.CENTER);
         add(panelBotones, BorderLayout.SOUTH);
-    
+
         // Configuración de permisos según el rol
-        configurarPermisos(usuarioLogueado, btnAgregar, btnEditar, btnEliminar, btnProveedores, btnLog, btnModificarCantidad, btnGenerarReporte);
-    
+        configurarPermisos(usuarioLogueado, btnAgregar, btnEditar, btnEliminar, btnProveedores, btnLog,
+                btnModificarCantidad, btnGenerarReporte);
+
         btnProveedores.addActionListener(_ -> mostrarProveedores());
         btnAgregar.addActionListener(_ -> agregarProducto());
         btnEditar.addActionListener(_ -> editarProducto());
@@ -83,12 +89,33 @@ public class GestionInventarioAPP extends JFrame {
         btnLog.addActionListener(_ -> mostrarLog());
         btnModificarCantidad.addActionListener(_ -> modificarCantidadProducto());
         btnGenerarReporte.addActionListener(_ -> mostrarVistaGenerarReporte()); // Acción del botón
+        btnVerificarStock.addActionListener(_ -> {
+            productoServicio.verificarYGenerarPedidosAutomaticos();
+        });
+        btnRecibirPedido.addActionListener(_ -> {
+            int confirmacion = JOptionPane.showConfirmDialog(
+                    this,
+                    "¿Estás seguro de que quieres procesar todos los pedidos pendientes?",
+                    "Confirmar",
+                    JOptionPane.YES_NO_OPTION
+            );
+        
+            if (confirmacion == JOptionPane.YES_OPTION) {
+                productoServicio.procesarPedidosPendientes(); // Procesa los pedidos pendientes
+                escribirLog("Todos los pedidos pendientes han sido procesados.");
+                actualizarTabla(); // Actualiza la tabla en la interfaz
+                actualizarCSV(); // Exporta los datos actualizados al archivo CSV
+                JOptionPane.showMessageDialog(this, "Todos los pedidos pendientes se han procesado correctamente.");
+            }
+        });
+        
+
     }
-    
-    private void configurarPermisos(Usuario usuario, JButton btnAgregar, JButton btnEditar, JButton btnEliminar, 
-                                     JButton btnProveedores, JButton btnLog, JButton btnModificarCantidad, JButton btnGenerarReporte) {
+
+    private void configurarPermisos(Usuario usuario, JButton btnAgregar, JButton btnEditar, JButton btnEliminar,
+            JButton btnProveedores, JButton btnLog, JButton btnModificarCantidad, JButton btnGenerarReporte) {
         String rol = usuario.getRol();
-    
+
         switch (rol) {
             case "Administrador":
                 // El administrador tiene acceso completo, no se necesita hacer nada
@@ -129,12 +156,12 @@ public class GestionInventarioAPP extends JFrame {
     private void agregarProducto() {
         List<Producto> productosExistentes = productoServicio.obtenerTodos();
         int maxId = productosExistentes.stream().mapToInt(Producto::getId).max().orElse(0);
-    
+
         VistaProducto dialog = new VistaProducto(this, "Agregar Producto", null, obtenerProveedores());
         dialog.setVisible(true);
-    
+
         Producto producto = dialog.getProducto();
-    
+
         if (producto != null) {
             producto.setId(maxId + 1);
             productoServicio.agregarProducto(producto);
@@ -175,21 +202,20 @@ public class GestionInventarioAPP extends JFrame {
     }
 
     private void actualizarTabla() {
-        modeloDeTabla.setRowCount(0);  // Limpiar tabla antes de actualizarla
+        modeloDeTabla.setRowCount(0); // Limpiar tabla antes de actualizarla
         List<Producto> productos = productoServicio.obtenerTodos();
         for (Producto p : productos) {
-            modeloDeTabla.addRow(new Object[]{
-                p.getId(),
-                p.getNombre(),
-                p.getPrecio(),  // Asegúrate de agregar precio
-                p.getCantidad(),  // Asegúrate de agregar cantidad
-                p.getFechaVencimiento(),
-                p.getProveedor() != null ? p.getProveedor() : "",
-                p.getCategoria()
+            modeloDeTabla.addRow(new Object[] {
+                    p.getId(),
+                    p.getNombre(),
+                    p.getPrecio(), // Asegúrate de agregar precio
+                    p.getCantidad(), // Asegúrate de agregar cantidad
+                    p.getFechaVencimiento(),
+                    p.getProveedor() != null ? p.getProveedor() : "",
+                    p.getCategoria()
             });
         }
     }
-    
 
     private void leerCSV() {
         try {
@@ -208,28 +234,26 @@ public class GestionInventarioAPP extends JFrame {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter("productos.csv"))) {
             // Escribir encabezado con todos los campos
             writer.write("ID,Nombre,Precio,Cantidad,Fecha De Vencimiento,Proveedor,Categoría\n");
-            
+
             // Escribir los productos
             for (Producto p : productoServicio.obtenerTodos()) {
                 writer.write(String.format("%d,%s,%.2f,%d,%s,%s,%s\n",
-                    p.getId(),
-                    p.getNombre(),
-                    p.getPrecio(), // Precio
-                    p.getCantidad(), // Cantidad
-                    p.getFechaVencimiento(), // Fecha de vencimiento
-                    p.getProveedor() != null ? p.getProveedor() : "", // Proveedor
-                    p.getCategoria() // Categoría
+                        p.getId(),
+                        p.getNombre(),
+                        p.getPrecio(), // Precio
+                        p.getCantidad(), // Cantidad
+                        p.getFechaVencimiento(), // Fecha de vencimiento
+                        p.getProveedor() != null ? p.getProveedor() : "", // Proveedor
+                        p.getCategoria() // Categoría
                 ));
             }
-            
+
             JOptionPane.showMessageDialog(this, "Archivo CSV exportado correctamente.");
         } catch (IOException e) {
             e.printStackTrace();
             JOptionPane.showMessageDialog(null, "Error al exportar el archivo.");
         }
     }
-    
-    
 
     private void mostrarLog() {
         VistaLog vistaLog = new VistaLog();
@@ -251,7 +275,8 @@ public class GestionInventarioAPP extends JFrame {
             Producto producto = productoServicio.obtenerTodos().get(selectedRow);
             VistaModificarCantidad dialog = new VistaModificarCantidad(this, "Modificar Cantidad", producto);
             dialog.setVisible(true);
-            escribirLog("Modificación de cantidad para producto: ID " + producto.getId() + ", Nombre: " + producto.getNombre());
+            escribirLog("Modificación de cantidad para producto: ID " + producto.getId() + ", Nombre: "
+                    + producto.getNombre());
             actualizarTabla();
             actualizarCSV();
         } else {
