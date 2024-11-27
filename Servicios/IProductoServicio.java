@@ -11,7 +11,7 @@ public interface IProductoServicio {
   void actualizarProducto(int index, Producto producto);
   void leerProductosCSV(String path) throws IOException; 
   void verificarYGenerarPedidosAutomaticos();
-  void recibirPedido(String nombreProducto, int cantidadRecibida);
+  //void recibirPedido(String nombreProducto, int cantidadRecibida);
   void procesarPedidosPendientes();
   List<Producto> obtenerPedidosPendientes();
   List<Producto> obtenerTodos();

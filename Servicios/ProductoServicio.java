@@ -4,7 +4,9 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.time.LocalDate;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.swing.JOptionPane;
@@ -73,55 +75,34 @@ public class ProductoServicio implements IProductoServicio {
     }
 
     public void verificarYGenerarPedidosAutomaticos() {
-        List<Producto> productos = obtenerTodos(); // Obtiene todos los productos del repositorio
+    List<Producto> productos = obtenerTodos(); // Obtiene todos los productos del repositorio
+    Set<Integer> productosPedidos = new HashSet<>(); // Conjunto para evitar duplicados (por ID de producto)
 
-        for (Producto producto : productos) {
-            if (producto.getCantidad() < 50) { // Verifica si el stock es menor a 50
-                int cantidadFaltante = 200 - producto.getCantidad();
+    for (Producto producto : productos) {
+        if (producto.getCantidad() < 50 && !productosPedidos.contains(producto.getId())) { // Verifica si el stock es menor a 50 y si no se ha generado un pedido previamente
+            int cantidadFaltante = 200 - producto.getCantidad();
 
-                // Simula la generación de un pedido automático
-                System.out.println("Pedido generado para: " + producto.getNombre() +
-                        " | Cantidad solicitada: " + cantidadFaltante);
+            // Simula la generación de un pedido automático
+            System.out.println("Pedido generado para: " + producto.getNombre() +
+                    " | Cantidad solicitada: " + cantidadFaltante);
 
-                // Mostrar alerta visual
-                JOptionPane.showMessageDialog(
-                        null,
-                        "El producto \"" + producto.getNombre() + "\" tiene stock bajo (" + producto.getCantidad()
-                                + ").\n" +
-                                "Se ha generado un pedido de " + cantidadFaltante + " unidades.",
-                        "Alerta de Stock Bajo",
-                        JOptionPane.WARNING_MESSAGE);
-            }
+            // Mostrar alerta visual
+            JOptionPane.showMessageDialog(
+                    null,
+                    "El producto \"" + producto.getNombre() + "\" tiene stock bajo (" + producto.getCantidad()
+                            + ").\n" +
+                            "Se ha generado un pedido de " + cantidadFaltante + " unidades.",
+                    "Alerta de Stock Bajo",
+                    JOptionPane.WARNING_MESSAGE);
+
+            // Añadir el producto al conjunto para evitar duplicados
+            productosPedidos.add(producto.getId());
         }
     }
+}
 
-    public void recibirPedido(String nombreProducto, int cantidadRecibida) {
-        List<Producto> productos = obtenerTodos(); // Obtén todos los productos
 
-        for (Producto producto : productos) {
-            if (producto.getNombre().equalsIgnoreCase(nombreProducto)) { // Busca el producto por nombre
-                producto.setCantidad(producto.getCantidad() + cantidadRecibida); // Actualiza la cantidad
-                actualizarProducto(producto.getId(), producto); // Guarda los cambios en el repositorio
-
-                // Confirmación visual
-                JOptionPane.showMessageDialog(
-                        null,
-                        "Se ha recibido el pedido del producto \"" + producto.getNombre() + "\".\n" +
-                                "Cantidad añadida: " + cantidadRecibida + ".\nNuevo stock: " + producto.getCantidad()
-                                + ".",
-                        "Pedido Recibido",
-                        JOptionPane.INFORMATION_MESSAGE);
-                return; // Salir del método después de encontrar y actualizar el producto
-            }
-        }
-
-        // Mensaje en caso de que el producto no se encuentre
-        JOptionPane.showMessageDialog(
-                null,
-                "El producto \"" + nombreProducto + "\" no fue encontrado.",
-                "Error al recibir pedido",
-                JOptionPane.ERROR_MESSAGE);
-    }
+    
 
     public List<Producto> obtenerTodos() {
         return repository.obtenerTodos();
