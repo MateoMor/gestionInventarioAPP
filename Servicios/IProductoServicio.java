@@ -13,5 +13,6 @@ public interface IProductoServicio {
   void verificarYGenerarPedidosAutomaticos();
   void recibirPedido(String nombreProducto, int cantidadRecibida);
   void procesarPedidosPendientes();
+  List<Producto> obtenerPedidosPendientes();
   List<Producto> obtenerTodos();
 }

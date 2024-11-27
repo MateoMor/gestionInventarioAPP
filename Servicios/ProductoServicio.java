@@ -5,6 +5,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.swing.JOptionPane;
 
@@ -151,5 +152,13 @@ public class ProductoServicio implements IProductoServicio {
             }
         }
     }
+
+    public List<Producto> obtenerPedidosPendientes() {
+    List<Producto> productos = obtenerTodos(); // Obtiene todos los productos
+    return productos.stream()
+            .filter(producto -> producto.getCantidad() < 50) // Filtra los productos con stock bajo
+            .collect(Collectors.toList());
+}
+
     
 }

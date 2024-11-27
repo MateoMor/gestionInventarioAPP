@@ -93,20 +93,9 @@ public class GestionInventarioAPP extends JFrame {
             productoServicio.verificarYGenerarPedidosAutomaticos();
         });
         btnRecibirPedido.addActionListener(_ -> {
-            int confirmacion = JOptionPane.showConfirmDialog(
-                    this,
-                    "¿Estás seguro de que quieres procesar todos los pedidos pendientes?",
-                    "Confirmar",
-                    JOptionPane.YES_NO_OPTION
-            );
-        
-            if (confirmacion == JOptionPane.YES_OPTION) {
-                productoServicio.procesarPedidosPendientes(); // Procesa los pedidos pendientes
-                escribirLog("Todos los pedidos pendientes han sido procesados.");
-                actualizarTabla(); // Actualiza la tabla en la interfaz
-                actualizarCSV(); // Exporta los datos actualizados al archivo CSV
-                JOptionPane.showMessageDialog(this, "Todos los pedidos pendientes se han procesado correctamente.");
-            }
+            // Crear y mostrar la ventana de pedidos pendientes
+            VistaPedidosPendientes vistaPedidosPendientes = new VistaPedidosPendientes(productoServicio);
+            vistaPedidosPendientes.setVisible(true);
         });
         
 
