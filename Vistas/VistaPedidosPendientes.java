@@ -43,18 +43,29 @@ public class VistaPedidosPendientes extends JDialog {
         btnAceptar.addActionListener(_ -> {
             // Obtener los productos pendientes antes de procesarlos
             List<Producto> pedidosPendientes = productoServicio.obtenerPedidosPendientes();
-
+        
             // Procesar los pedidos pendientes
+            for (Producto pedido : pedidosPendientes) {
+                // Calcular la cantidad solicitada
+                int cantidadFaltante = 200 - pedido.getCantidad(); 
+        
+                if (cantidadFaltante > 0) {
+                    // Registrar la transacción en el log
+                    registrarLog(pedido.getId(), pedido.getNombre(), "Pedido recibido", cantidadFaltante, 200, "Pedido automático para alcanzar stock de 200");
+                }
+            }
+        
+            // Procesar los pedidos
             productoServicio.procesarPedidosPendientes();
-
+        
             // Exportar los productos a CSV
             exportarProductosACSV(pedidosPendientes);
-
+        
             // Mostrar mensaje de éxito y cerrar la ventana
             JOptionPane.showMessageDialog(this, "Pedidos procesados correctamente.");
             dispose(); // Cierra la ventana
         });
-
+        
         btnCancelar.addActionListener(_ -> dispose()); // Cierra la ventana
 
         // Añadir componentes a la ventana
@@ -105,6 +116,18 @@ public class VistaPedidosPendientes extends JDialog {
 
         // Sobrescribir el archivo CSV con los productos actualizados
         escribirProductosACSV(rutaArchivo, productosExistentes);
+    }
+
+    public void registrarLog(int productoId, String nombreProducto, String tipoMovimiento, int cantidadCambiada, int cantidadFinal, String motivo) {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter("transacciones.log", true))) {
+            // Escribir la transacción en el log
+            String logEntry = String.format("Fecha: %s, Producto: %d, Nombre: %s, Tipo de movimiento: %s, Cantidad cambiada: %d, Cantidad final: %d, Motivo: %s\n",
+                    LocalDate.now(), productoId, nombreProducto, tipoMovimiento, cantidadCambiada, cantidadFinal, motivo);
+            writer.write(logEntry);
+        } catch (IOException e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(this, "Error al escribir el log de transacciones.", "Error", JOptionPane.ERROR_MESSAGE);
+        }
     }
 
     private Map<Integer, Producto> cargarProductosDesdeCSV(String rutaArchivo) {
