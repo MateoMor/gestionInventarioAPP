@@ -3,6 +3,6 @@ ID,Nombre,Precio,Cantidad,Fecha De Vencimiento,Proveedor,Categoría
 3,Camiseta Deportiva,25.0,300,2024-08-30,Indumentaria Fashion,indumentaria
 5,Computador Portátil,800.0,70,2025-01-15,Electro Mundo,tecnologica
 7,Smartphone 5G,550.0,240,2025-11-10,Gadgets Globales,tecnologica
-9,Cereal Integral,4.0,240,2024-10-30,Desayunos Saludables,alimento
+9,Cereal Integral,4.0,40,2024-10-30,Desayunos Saludables,alimento
 11,Cámara Digital,350.0,210,2025-06-18,Fotografía Pro,tecnologica
-13,as,15.0,220,2024-10-10,Tecnología Innovadora,algo
+13,as,15.0,20,2024-10-10,Tecnología Innovadora,algo
