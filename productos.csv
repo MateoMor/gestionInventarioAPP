@@ -1,8 +1,8 @@
 ID,Nombre,Precio,Cantidad,Fecha De Vencimiento,Proveedor,Categoría
-1,Leche UHT,1.5,240,2025-12-01,Lacteos S.A.,alimento
-3,Camiseta Deportiva,25.0,300,2024-08-30,Indumentaria Fashion,indumentaria
-5,Computador Portátil,800.0,70,2025-01-15,Electro Mundo,tecnologica
-7,Smartphone 5G,550.0,240,2025-11-10,Gadgets Globales,tecnologica
-9,Cereal Integral,4.0,40,2024-10-30,Desayunos Saludables,alimento
-11,Cámara Digital,350.0,210,2025-06-18,Fotografía Pro,tecnologica
-13,as,15.0,20,2024-10-10,Tecnología Innovadora,algo
+1,Leche UHT,1.50,240,2025-12-01,Lacteos S.A.,alimento
+3,Camiseta Deportiva,25.00,300,2024-08-30,Indumentaria Fashion,indumentaria
+5,Computador Portátil,800.00,70,2025-01-15,Electro Mundo,tecnologica
+7,Smartphone 5G,550.00,240,2025-11-10,Gadgets Globales,tecnologica
+9,Cereal Integral,4.00,40,2024-10-30,Desayunos Saludables,alimento
+11,Cámara Digital,350.00,210,2025-06-18,Fotografía Pro,tecnologica
+13,as,15.00,20,2024-10-10,Tecnología Innovadora,algo

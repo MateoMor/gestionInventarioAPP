@@ -48,7 +48,7 @@ public class GestionInventarioAPP extends JFrame {
         setTitle("Gestión de Inventario - Usuario: " + usuarioLogueado.getRol());
         setLayout(new BorderLayout());
         setDefaultCloseOperation(EXIT_ON_CLOSE);
-        setSize(1050, 400);
+        setSize(1250, 400);
 
         JPanel panelBotones = new JPanel();
         JButton btnProveedores = new JButton("Proveedores");
@@ -60,6 +60,7 @@ public class GestionInventarioAPP extends JFrame {
         JButton btnGenerarReporte = new JButton("Generar Reporte"); // Botón para reportes
         JButton btnVerificarStock = new JButton("Verificar Stock Bajo");
         JButton btnRecibirPedido = new JButton("Recibir Pedido");
+        JButton btnVerReporte = new JButton("Reporte Inventario");
 
         leerCSV(); // Leer datos desde CSV
         actualizarTabla(); // Actualizar tabla con datos leídos
@@ -74,6 +75,7 @@ public class GestionInventarioAPP extends JFrame {
         panelBotones.add(btnGenerarReporte); // Agregar botón de reportes
         panelBotones.add(btnVerificarStock);
         panelBotones.add(btnRecibirPedido);
+        panelBotones.add(btnVerReporte);
 
         add(new JScrollPane(tablaDeProductos), BorderLayout.CENTER);
         add(panelBotones, BorderLayout.SOUTH);
@@ -97,7 +99,10 @@ public class GestionInventarioAPP extends JFrame {
             VistaPedidosPendientes vistaPedidosPendientes = new VistaPedidosPendientes(productoServicio);
             vistaPedidosPendientes.setVisible(true);
         });
-        
+        btnVerReporte.addActionListener(_ -> {
+            VistaReporteInventario vista = new VistaReporteInventario();
+            vista.setVisible(true);
+        });
 
     }
 
